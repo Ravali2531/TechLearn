@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "983713702981",
+    "project_id": "techlearn-55595",
+    "storage_bucket": "techlearn-55595.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:983713702981:android:471e0e1fe962b42f4d6f2c",
+        "android_client_info": {
+          "package_name": "com.example.techlearn"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyATj0vJIRnlXsD_mMD7Y4Z7jytrqA1cb-g"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
