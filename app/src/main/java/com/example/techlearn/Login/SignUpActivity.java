@@ -59,10 +59,10 @@ public class SignUpActivity extends AppCompatActivity {
                     binding.edtName.setError("Enter your name");
                 }
                 else if(email.isEmpty()){
-                    binding.edtName.setError("Enter your email");
+                    binding.edtEmail.setError("Enter your email");
                 }
                 else if(password.isEmpty()){
-                    binding.edtName.setError("Enter your password");
+                    binding.edtPassword.setError("Enter your password");
                 }
                 else{
                     signup(name, email, password);
@@ -75,7 +75,6 @@ public class SignUpActivity extends AppCompatActivity {
             public void onClick(View view) {
                 Intent intent = new Intent(SignUpActivity.this, SignInActivity.class);
                 startActivity(intent);
-                finish();
             }
         });
 
@@ -99,9 +98,20 @@ public class SignUpActivity extends AppCompatActivity {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
                                             if(task.isSuccessful()){
+                                                auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                    @Override
+                                                    public void onComplete(@NonNull Task<Void> task) {
+                                                        loadindDalog.dismiss();
+                                                        Toast.makeText(SignUpActivity.this, "Register successfully, please verify your email id", Toast.LENGTH_SHORT).show();
+                                                        onBackPressed();
+                                                    }
+                                                });
+
+                                            }
+                                            else{
+
                                                 loadindDalog.dismiss();
-                                                Toast.makeText(SignUpActivity.this, "Register successfully, please verify your email id", Toast.LENGTH_SHORT).show();
-                                                onBackPressed();
+                                                Toast.makeText(SignUpActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
