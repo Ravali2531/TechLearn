@@ -106,10 +106,8 @@ public class SignUpActivity extends AppCompatActivity {
                                                         onBackPressed();
                                                     }
                                                 });
-
                                             }
                                             else{
-
                                                 loadindDalog.dismiss();
                                                 Toast.makeText(SignUpActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
                                             }
