@@ -49,4 +49,8 @@ dependencies {
     testImplementation(libs.junit)
     androidTestImplementation(libs.ext.junit)
     androidTestImplementation(libs.espresso.core)
+    implementation ("com.github.ismaeldivita:chip-navigation-bar:1.4.0")
+    implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.0")
+    implementation ("de.hdodenhof:circleimageview:3.1.0")
+    implementation ("com.squareup.picasso:picasso:2.8")
 }
