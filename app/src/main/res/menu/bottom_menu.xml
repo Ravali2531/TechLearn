@@ -11,7 +11,7 @@
         app:cnb_textColor = "@color/white"/>
     <item
         android:id="@+id/profile"
-        android:icon="@drawable/profile"
+        android:icon="@drawable/user_profile"
         android:title="Profile"
         app:cnb_backgroundColor = "@color/background"
         app:cnb_iconColor = "@color/white"
