@@ -92,10 +92,12 @@ public class UploadCourseActivity extends AppCompatActivity {
                 String rating = binding.edtRating.getText().toString();
                 String description = binding.edtDescription.getText().toString();
 
-                if(imageUri == null){
-                    Toast.makeText(UploadCourseActivity.this, "Select thumbnail image", Toast.LENGTH_SHORT).show();
-                }
-                else if(title.isEmpty()){
+//                if(imageUri == null){
+//                    Toast.makeText(UploadCourseActivity.this, "Select thumbnail image", Toast.LENGTH_SHORT).show();
+//                }
+//                else
+
+                if(title.isEmpty()){
 
                     binding.edtTitle.setError("Enter title");
 
