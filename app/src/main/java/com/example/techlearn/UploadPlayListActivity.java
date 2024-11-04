@@ -1,5 +1,7 @@
 package com.example.techlearn;
 
+import android.app.Dialog;
+import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.activity.EdgeToEdge;
@@ -8,8 +10,18 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-public class UploadPlayListActivity extends AppCompatActivity {
+import com.example.techlearn.databinding.ActivityUploadCourseBinding;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.storage.FirebaseStorage;
 
+public class UploadPlayListActivity extends AppCompatActivity {
+    ActivityUploadCourseBinding binding;
+    FirebaseAuth auth;
+    FirebaseDatabase database;
+    FirebaseStorage storage;
+    Uri imageUri, videoUri;
+    Dialog loadingDialog;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
