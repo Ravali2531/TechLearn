@@ -1,6 +1,7 @@
 package com.example.techlearn.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.example.techlearn.Model.CourseModel;
 import com.example.techlearn.Model.UserModel;
 import com.example.techlearn.R;
+import com.example.techlearn.UploadPlayListActivity;
 import com.example.techlearn.databinding.RvCourseDesignBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -74,6 +76,15 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
             @Override
             public void onCancelled(@NonNull DatabaseError error) {
 
+            }
+        });
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(context, UploadPlayListActivity.class);
+                intent.putExtra("postId", model.getPostId());
+                context.startActivity(intent);
             }
         });
 

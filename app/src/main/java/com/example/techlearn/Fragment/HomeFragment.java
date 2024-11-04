@@ -71,6 +71,7 @@ public class HomeFragment extends Fragment {
         loadingDialog.show();
 
         list = new ArrayList<>();
+
         GridLayoutManager layoutManager = new GridLayoutManager(getContext(), 2);
         binding.rvCourse.setLayoutManager(layoutManager);
 
