@@ -22,6 +22,7 @@ import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseAuthUserCollisionException;
 import com.google.firebase.database.FirebaseDatabase;
 
 public class SignUpActivity extends AppCompatActivity {
@@ -54,6 +55,7 @@ public class SignUpActivity extends AppCompatActivity {
                 String name = binding.edtName.getText().toString();
                 String email = binding.edtEmail.getText().toString();
                 String password = binding.edtPassword.getText().toString();
+                String role = binding.spinnerRole.getSelectedItem().toString();
 
                 if(name.isEmpty()){
                     binding.edtName.setError("Enter your name");
@@ -65,7 +67,7 @@ public class SignUpActivity extends AppCompatActivity {
                     binding.edtPassword.setError("Enter your password");
                 }
                 else{
-                    signup(name, email, password);
+                    signup(name, email, password, role);
                 }
             }
         });
@@ -81,40 +83,54 @@ public class SignUpActivity extends AppCompatActivity {
 
     }
 
-    private void signup(String name, String email, String password) {
+    private void signup(String name, String email, String password, String role) {
         loadindDalog.show();
 
         auth.createUserWithEmailAndPassword(email, password)
                 .addOnCompleteListener(new OnCompleteListener<AuthResult>() {
                     @Override
                     public void onComplete(@NonNull Task<AuthResult> task) {
-                        if(task.isSuccessful()){
+                        loadindDalog.dismiss();
+                        if (task.isSuccessful()) {
+                            // Successful registration
                             String userId = task.getResult().getUser().getUid();
 
-                            UserModel userModel = new UserModel(name, email, password, "");
+                            UserModel userModel = new UserModel(name, email, password, "https://firebasestorage.googleapis.com/v0/b/your-app-id.appspot.com/o/default_profile.png?alt=media", role);
 
                             database.getReference().child("user_details").child(userId)
                                     .setValue(userModel).addOnCompleteListener(new OnCompleteListener<Void>() {
                                         @Override
                                         public void onComplete(@NonNull Task<Void> task) {
-                                            if(task.isSuccessful()){
-                                                auth.getCurrentUser().sendEmailVerification().addOnCompleteListener(new OnCompleteListener<Void>() {
-                                                    @Override
-                                                    public void onComplete(@NonNull Task<Void> task) {
-                                                        loadindDalog.dismiss();
-                                                        Toast.makeText(SignUpActivity.this, "Register successfully, please verify your email id", Toast.LENGTH_SHORT).show();
-                                                        onBackPressed();
-                                                    }
-                                                });
-                                            }
-                                            else{
-                                                loadindDalog.dismiss();
-                                                Toast.makeText(SignUpActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                                            if (task.isSuccessful()) {
+                                                auth.getCurrentUser().sendEmailVerification()
+                                                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                                                            @Override
+                                                            public void onComplete(@NonNull Task<Void> task) {
+                                                                Toast.makeText(SignUpActivity.this, "Registered successfully. Please verify your email.", Toast.LENGTH_SHORT).show();
+                                                                onBackPressed();
+                                                            }
+                                                        });
+                                            } else {
+                                                Toast.makeText(SignUpActivity.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                                             }
                                         }
                                     });
+                        } else {
+                            // Registration failed
+                            String errorMessage;
+                            try {
+                                throw task.getException();
+                            } catch (FirebaseAuthUserCollisionException e) {
+                                errorMessage = "This email is already registered.";
+                            } catch (Exception e) {
+                                errorMessage = "Registration failed: " + e.getMessage();
+                            }
+                            Toast.makeText(SignUpActivity.this, errorMessage, Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
     }
+
+
+
 }

@@ -1,16 +1,17 @@
 package com.example.techlearn.Model;
 
 public class UserModel {
-    private String name, email, password, profile;
+    private String name, email, password, profile, role;
 
     public UserModel() {
     }
 
-    public UserModel(String name, String email, String password, String profile) {
+    public UserModel(String name, String email, String password, String profile, String role) {
         this.name = name;
         this.email = email;
         this.password = password;
         this.profile = profile;
+        this.role = role;
     }
 
     public String getName() {
@@ -43,5 +44,13 @@ public class UserModel {
 
     public void setProfile(String profile) {
         this.profile = profile;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
