@@ -2,4 +2,11 @@
     <string name="app_name">TechLearn</string>
     <!-- TODO: Remove or change this placeholder text -->
     <string name="hello_blank_fragment">Hello blank fragment</string>
+
+    <!-- Role options for the signup role selector -->
+    <string-array name="role_array">
+        <item>Choose One:</item>
+        <item>User</item>
+        <item>Admin</item>
+    </string-array>
 </resources>

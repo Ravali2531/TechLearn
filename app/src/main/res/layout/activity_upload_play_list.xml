@@ -8,7 +8,7 @@
     tools:context=".UploadPlayListActivity">
 
     <ImageView
-        android:id="@+id/imageView3"
+        android:id="@+id/uploadVideo"
         android:layout_width="0dp"
         android:layout_height="150dp"
         android:layout_marginStart="16dp"
@@ -20,16 +20,39 @@
         app:srcCompat="@drawable/upload_image" />
 
     <EditText
-        android:id="@+id/editTextText"
+        android:id="@+id/vTitle"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginTop="24dp"
         android:background="@drawable/edt_shape"
         android:ems="10"
+        android:hint="Enter title"
         android:inputType="text"
         android:padding="15dp"
-        android:text="Name"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="@+id/imageView3"
-        app:layout_constraintTop_toBottomOf="@+id/imageView3" />
+        app:layout_constraintStart_toStartOf="@+id/uploadVideo"
+        app:layout_constraintTop_toBottomOf="@+id/uploadVideo" />
+
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/uploadPlayList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:srcCompat="@drawable/add" />
+
+    <androidx.recyclerview.widget.RecyclerView
+        android:id="@+id/rvPlayList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vTitle"
+        app:layout_constraintVertical_bias="1.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>

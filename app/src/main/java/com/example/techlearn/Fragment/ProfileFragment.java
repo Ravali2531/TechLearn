@@ -20,6 +20,7 @@ import com.example.techlearn.Login.SignInActivity;
 import com.example.techlearn.Model.UserModel;
 import com.example.techlearn.R;
 import com.example.techlearn.databinding.FragmentProfileBinding;
+import com.google.android.gms.tasks.OnFailureListener;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -41,6 +42,7 @@ public class ProfileFragment extends Fragment {
     FirebaseStorage storage;
     Dialog loadingDialog;
     Uri profileUri;
+
     public ProfileFragment() {
         // Required empty public constructor
     }
@@ -48,13 +50,10 @@ public class ProfileFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-
     }
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        // Inflate the layout for this fragment
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         binding = FragmentProfileBinding.inflate(inflater, container, false);
 
         auth = FirebaseAuth.getInstance();
@@ -64,125 +63,106 @@ public class ProfileFragment extends Fragment {
         loadingDialog = new Dialog(getContext());
         loadingDialog.setContentView(R.layout.loading_dialog);
 
-        if(loadingDialog.getWindow() != null){
+        if (loadingDialog.getWindow() != null) {
             loadingDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             loadingDialog.setCancelable(false);
         }
 
         loadProfileImage();
 
-        binding.profileImage.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.setAction(Intent.ACTION_GET_CONTENT);
-                intent.setType("image/*");
-                startActivityForResult(intent, 1);
-
-            }
+        // Choose a profile image
+        binding.profileImage.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            startActivityForResult(intent, 1);
         });
 
-        binding.cardTerms.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
+        // Terms of Service
+        binding.cardTerms.setOnClickListener(view ->
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.example.com/terms"))));
 
-                startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://www.youtube.com/")));
+        // Rate App
+        binding.cardRate.setOnClickListener(view ->
+                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getContext().getPackageName()))));
 
-            }
-        });
-
-        binding.cardRate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                startActivity(new Intent(Intent.ACTION_VIEW,Uri.parse("https://play.google.com/store/apps/details?id="+getContext().getPackageName())));
-
-            }
-        });
-
-        binding.cardLogout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-
-                auth.signOut();
-                Intent intent = new Intent(getContext(), SignInActivity.class);
-                intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-                startActivity(intent);
-
-            }
+        // Logout
+        binding.cardLogout.setOnClickListener(view -> {
+            auth.signOut();
+            Intent intent = new Intent(getContext(), SignInActivity.class);
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            startActivity(intent);
         });
 
         return binding.getRoot();
     }
 
     private void loadProfileImage() {
+        database.getReference().child("user_details").child(auth.getUid())
+                .addValueEventListener(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            UserModel model = snapshot.getValue(UserModel.class);
+                            if (model != null) {
+                                binding.userName.setText(model.getName() != null ? model.getName() : "User");
+                                binding.userEmail.setText(model.getEmail() != null ? model.getEmail() : "example@gmail.com");
 
-        database.getReference().child("user_details").child(auth.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                if(snapshot.exists()){
+                                String profileUrl = model.getProfile();
+                                if (profileUrl != null && !profileUrl.isEmpty()) {
+                                    Picasso.get().load(profileUrl)
+                                            .placeholder(R.drawable.user_profile)
+                                            .error(R.drawable.user_profile)
+                                            .into(binding.profileImage);
+                                } else {
+                                    binding.profileImage.setImageResource(R.drawable.user_profile);
+                                }
+                            }
+                        }
+                    }
 
-                    UserModel model = snapshot.getValue((UserModel.class));
-
-                    binding.userName.setText(model.getName());
-                    binding.userEmail.setText(model.getEmail());
-
-                    Picasso.get()
-                            .load(model.getProfile())
-                            .placeholder(R.drawable.user_profile)
-                            .into(binding.profileImage);
-
-                }
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
-        });
-
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(getContext(), "Failed to load profile data", Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
 
     @Override
     public void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if(requestCode == 1){
-            if(data!=null){
-                updateProfile(data.getData());
-            }
+        if (requestCode == 1 && data != null) {
+            updateProfile(data.getData());
         }
     }
 
     private void updateProfile(Uri uri) {
-
         loadingDialog.show();
 
-        final StorageReference reference = storage.getReference().child("profile_image")
-                .child(auth.getCurrentUser().getUid());
+        StorageReference reference = storage.getReference().child("profile_image").child(auth.getCurrentUser().getUid());
 
         reference.putFile(uri)
-                .addOnSuccessListener(new OnSuccessListener<UploadTask.TaskSnapshot>() {
-                    @Override
-                    public void onSuccess(UploadTask.TaskSnapshot taskSnapshot) {
-                        reference.getDownloadUrl()
-                                .addOnSuccessListener(new OnSuccessListener<Uri>() {
-                                    @Override
-                                    public void onSuccess(Uri uri) {
-                                        HashMap<String, Object> map  = new HashMap<>();
-                                        map.put("profile", uri.toString());
+                .addOnSuccessListener(taskSnapshot -> reference.getDownloadUrl().addOnSuccessListener(downloadUri -> {
+                    HashMap<String, Object> map = new HashMap<>();
+                    map.put("profile", downloadUri.toString());
 
-                                        database.getReference().child("user_details").child(auth.getUid())
-                                                .updateChildren(map).addOnSuccessListener(new OnSuccessListener<Void>() {
-                                                    @Override
-                                                    public void onSuccess(Void unused) {
-                                                        loadingDialog.dismiss();
-                                                        Toast.makeText(getContext(), "Profile image updated", Toast.LENGTH_SHORT).show();
-                                                    }
-                                                });
-                                    }
-                                });
-                    }
+                    database.getReference().child("user_details").child(auth.getUid())
+                            .updateChildren(map)
+                            .addOnSuccessListener(unused -> {
+                                loadingDialog.dismiss();
+                                Toast.makeText(getContext(), "Profile image updated", Toast.LENGTH_SHORT).show();
+                            })
+                            .addOnFailureListener(e -> {
+                                loadingDialog.dismiss();
+                                Toast.makeText(getContext(), "Failed to update profile", Toast.LENGTH_SHORT).show();
+                            });
+                }).addOnFailureListener(e -> {
+                    loadingDialog.dismiss();
+                    Toast.makeText(getContext(), "Failed to upload image", Toast.LENGTH_SHORT).show();
+                }))
+                .addOnFailureListener(e -> {
+                    loadingDialog.dismiss();
+                    Toast.makeText(getContext(), "Failed to upload image", Toast.LENGTH_SHORT).show();
                 });
-
     }
 }
