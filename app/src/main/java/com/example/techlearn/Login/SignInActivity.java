@@ -32,6 +32,7 @@ public class SignInActivity extends AppCompatActivity {
     FirebaseAuth auth;
     FirebaseDatabase database;
     Dialog loadindDalog;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -45,55 +46,63 @@ public class SignInActivity extends AppCompatActivity {
         loadindDalog = new Dialog(SignInActivity.this);
         loadindDalog.setContentView(R.layout.loading_dialog);
 
-        if(loadindDalog.getWindow() != null){
+        if (loadindDalog.getWindow() != null) {
             loadindDalog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
             loadindDalog.setCancelable(false);
         }
 
-        binding.btnSignIn.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                String email = binding.edtEmail.getText().toString();
-                String password = binding.edtPassword.getText().toString();
+        // Check if the user is already logged in
+        if (auth.getCurrentUser() != null) {
+            loadindDalog.show();
 
-               if(email.isEmpty()){
-                    binding.edtEmail.setError("Enter your email");
-                }
-                else if(password.isEmpty()){
-                    binding.edtPassword.setError("Enter your password");
-                }
-                else{
-                    signIn(email, password);
-                }
-            }
-        });
+            // Fetch the user's role from Firebase
+            String userId = auth.getCurrentUser().getUid();
+            database.getReference("user_details").child(userId).child("role")
+                    .get().addOnCompleteListener(task -> {
+                        loadindDalog.dismiss();
+                        if (task.isSuccessful() && task.getResult().exists()) {
+                            String role = task.getResult().getValue(String.class);
 
-        binding.createAccount.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        binding.forgotPassword.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(SignInActivity.this, ForgotPasswordActivity.class);
-                startActivity(intent);
-                finish();
-            }
-        });
-
-        if(auth.getCurrentUser()!=null){
-
-            Intent intent = new Intent(SignInActivity.this, MainActivity.class);
-            startActivity(intent);
-            finish();
+                            Intent intent;
+                            if ("Admin".equals(role)) {
+                                intent = new Intent(SignInActivity.this, MainActivity.class);
+                            } else {
+                                intent = new Intent(SignInActivity.this, UserMainActivity.class);
+                            }
+                            startActivity(intent);
+                            finish();
+                        } else {
+                            Toast.makeText(SignInActivity.this, "Failed to fetch user role", Toast.LENGTH_SHORT).show();
+                        }
+                    });
         }
 
+        binding.btnSignIn.setOnClickListener(view -> {
+            String email = binding.edtEmail.getText().toString();
+            String password = binding.edtPassword.getText().toString();
+
+            if (email.isEmpty()) {
+                binding.edtEmail.setError("Enter your email");
+            } else if (password.isEmpty()) {
+                binding.edtPassword.setError("Enter your password");
+            } else {
+                signIn(email, password);
+            }
+        });
+
+        binding.createAccount.setOnClickListener(view -> {
+            Intent intent = new Intent(SignInActivity.this, SignUpActivity.class);
+            startActivity(intent);
+            finish();
+        });
+
+        binding.forgotPassword.setOnClickListener(view -> {
+            Intent intent = new Intent(SignInActivity.this, ForgotPasswordActivity.class);
+            startActivity(intent);
+            finish();
+        });
     }
+
 
     private void signIn(String email, String password) {
 
@@ -116,7 +125,7 @@ public class SignInActivity extends AppCompatActivity {
                                                     String role = roleTask.getResult().getValue(String.class);
 
                                                     Intent intent;
-                                                    if ("admin".equals(role)) {
+                                                    if ("Admin".equals(role)) {
                                                         intent = new Intent(SignInActivity.this, MainActivity.class);
                                                     } else {
                                                         intent = new Intent(SignInActivity.this, UserMainActivity.class);

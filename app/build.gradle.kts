@@ -53,4 +53,6 @@ dependencies {
     implementation ("org.jetbrains.kotlin:kotlin-stdlib:1.4.0")
     implementation ("de.hdodenhof:circleimageview:3.1.0")
     implementation ("com.squareup.picasso:picasso:2.8")
+
+    implementation ("com.google.android.exoplayer:exoplayer:2.19.1")
 }
