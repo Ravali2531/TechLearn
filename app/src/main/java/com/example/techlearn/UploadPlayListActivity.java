@@ -124,7 +124,7 @@ public class UploadPlayListActivity extends AppCompatActivity {
         adapter = new PlayListAdapter( UploadPlayListActivity.this, list);
         binding.rvPlayList.setAdapter(adapter);
 
-        database.getReference().child("course").child("postId").child("playlist")
+        database.getReference().child("course").child(postId).child("playlist")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -176,7 +176,7 @@ public class UploadPlayListActivity extends AppCompatActivity {
 
 
 
-                        database.getReference().child("course").child("postId").child("playlist")
+                        database.getReference().child("course").child(postId).child("playlist")
                                 .push()
                                 .setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override
@@ -194,20 +194,37 @@ public class UploadPlayListActivity extends AppCompatActivity {
 
     }
 
+//    @Override
+//    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+//        super.onActivityResult(requestCode, resultCode, data);
+//
+//        //Upload thumbnail image
+//        if(requestCode == 1){
+//
+//            if(data != null){
+//
+//                videoUri = data.getData();
+//            }
+//
+//        }
+//
+//
+//    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        //Upload thumbnail image
-        if(requestCode == 1){
-
-            if(data != null){
-
-                videoUri = data.getData();
+        // Check if the result is from selecting a video
+        if (requestCode == 2 && resultCode == RESULT_OK && data != null) {
+            videoUri = data.getData();
+            if (videoUri != null) {
+                // Show a preview or update the UI as needed
+                binding.uploadVideo.setImageURI(videoUri); // Optional: show thumbnail of the video
+            } else {
+                Toast.makeText(this, "Failed to select video, please try again", Toast.LENGTH_SHORT).show();
             }
-
         }
-
-
     }
+
 }

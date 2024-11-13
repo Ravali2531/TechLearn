@@ -25,15 +25,16 @@ import com.squareup.picasso.Picasso;
 
 import java.util.ArrayList;
 
-public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.viewHolder>{
+public class PlayListUserAdapter extends RecyclerView.Adapter<PlayListUserAdapter.viewHolder>{
 
     Context context;
     ArrayList<PlayListModel>list;
+    videoListener listener;
 
-
-    public PlayListAdapter(Context context, ArrayList<PlayListModel> list) {
+    public PlayListUserAdapter(Context context, ArrayList<PlayListModel> list, videoListener listener) {
         this.context = context;
         this.list = list;
+        this.listener = listener;
     }
 
     @NonNull
@@ -50,6 +51,14 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.viewHo
         PlayListModel model = list.get(position);
 
         holder.binding.title.setText(model.getTitle());
+
+        holder.itemView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                listener.onClick(position, list.get(position).getKey(), model.getVideoUrl(), list.size());
+            }
+        });
 
 
     }
@@ -68,5 +77,10 @@ public class PlayListAdapter extends RecyclerView.Adapter<PlayListAdapter.viewHo
             super(itemView);
             binding = RvPlaylistDesignBinding.bind(itemView);
         }
+    }
+
+    public interface videoListener{
+
+        public void onClick(int position, String key, String videoUrl, int size);
     }
 }
