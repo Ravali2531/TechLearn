@@ -4,27 +4,25 @@ import android.app.ProgressDialog;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.Toast;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.android.gms.tasks.OnSuccessListener;
+import com.example.techlearn.Model.UserModel;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
-import com.google.firebase.storage.UploadTask;
+import com.squareup.picasso.Picasso;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 
 public class EditProfile extends AppCompatActivity {
 
-    private EditText editName, editEmail, editPassword;
+    private EditText editName, editEmail;
     private CircleImageView editProfileImage;
     private Button btnUpdateProfile;
 
@@ -63,7 +61,15 @@ public class EditProfile extends AppCompatActivity {
         editName.setText(intent.getStringExtra("name"));
         editEmail.setText(intent.getStringExtra("email"));
         profileUrl = intent.getStringExtra("profile");
-        // Load profile image using Glide or Picasso if required
+
+        if (profileUrl != null && !profileUrl.isEmpty()) {
+            Picasso.get().load(profileUrl)
+                    .placeholder(R.drawable.user_profile)
+                    .error(R.drawable.user_profile)
+                    .into(editProfileImage);
+        } else {
+            editProfileImage.setImageResource(R.drawable.user_profile);
+        }
 
         // Handle profile image change
         editProfileImage.setOnClickListener(v -> chooseProfileImage());
@@ -94,7 +100,6 @@ public class EditProfile extends AppCompatActivity {
         String email = editEmail.getText().toString();
 
         if (profileImageUri != null) {
-            // Upload new profile image
             storageReference.putFile(profileImageUri).addOnSuccessListener(taskSnapshot ->
                     storageReference.getDownloadUrl().addOnSuccessListener(uri -> {
                         String newProfileUrl = uri.toString();
@@ -102,7 +107,6 @@ public class EditProfile extends AppCompatActivity {
                     })
             );
         } else {
-            // Update with existing profile URL
             updateDatabase(name, email, profileUrl);
         }
     }
@@ -111,14 +115,6 @@ public class EditProfile extends AppCompatActivity {
         databaseReference.child("name").setValue(name);
         databaseReference.child("email").setValue(email);
         databaseReference.child("profile").setValue(profileUrl);
-//
-//        if (!password.isEmpty()) {
-//            auth.getCurrentUser().updatePassword(password).addOnCompleteListener(task -> {
-//                if (!task.isSuccessful()) {
-//                    Toast.makeText(this, "Password update failed!", Toast.LENGTH_SHORT).show();
-//                }
-//            });
-//        }
 
         progressDialog.dismiss();
         Toast.makeText(this, "Profile updated successfully!", Toast.LENGTH_SHORT).show();
