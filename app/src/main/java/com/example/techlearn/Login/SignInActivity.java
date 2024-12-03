@@ -145,7 +145,7 @@ public class SignInActivity extends AppCompatActivity {
                         }
                         else{
                             loadindDalog.dismiss();
-                            Toast.makeText(SignInActivity.this, task.getException().toString(), Toast.LENGTH_SHORT).show();
+                            Toast.makeText(SignInActivity.this, "Please check your email and password.", Toast.LENGTH_SHORT).show();
                         }
                     }
                 });
