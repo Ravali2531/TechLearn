@@ -173,7 +173,15 @@ public class PlayListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                paymentFlow();
+                if (clientSecret != null && !clientSecret.isEmpty() &&
+                        customerId != null && !customerId.isEmpty() &&
+                        ephericalKey != null && !ephericalKey.isEmpty()) {
+                    paymentFlow();
+                } else {
+                    Toast.makeText(PlayListActivity.this,
+                            "Error initializing payment. Please try again.",
+                            Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -215,25 +223,6 @@ public class PlayListActivity extends AppCompatActivity {
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(request);
-
-    }
-
-    private void paymentFlow() {
-
-        paymentSheet.presentWithPaymentIntent(clientSecret, new PaymentSheet.Configuration("TechLearn", new PaymentSheet.CustomerConfiguration(
-                customerId,
-                ephericalKey
-        )));
-
-    }
-
-    private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
-
-        if(paymentSheetResult instanceof PaymentSheetResult.Completed){
-
-            Toast.makeText(this, "Payment Success", Toast.LENGTH_SHORT).show();
-
-        }
 
     }
 
@@ -333,8 +322,8 @@ public class PlayListActivity extends AppCompatActivity {
 
                 Map<String, String> params = new HashMap<>();
                 params.put("customer", customerId);
-                params.put("amount", String.valueOf(price));
-                params.put("currency","usd");
+                params.put("amount", "100"+"00");
+                params.put("currency","CAD");
                 params.put("automatic_payment_methods[enabled]", "true");
                 return params;
             }
@@ -397,6 +386,34 @@ public class PlayListActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(this, "No introduction video available", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void paymentFlow() {
+
+        if (clientSecret != null && !clientSecret.isEmpty() && ephericalKey != null) {
+            paymentSheet.presentWithPaymentIntent(
+                    clientSecret,
+                    new PaymentSheet.Configuration(
+                            "TechLearn",
+                            new PaymentSheet.CustomerConfiguration(customerId, ephericalKey)
+                    )
+            );
+        } else {
+            Log.e("PaymentFlow", "Missing clientSecret or ephericalKey");
+            Toast.makeText(this, "Payment parameters are invalid", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
+
+        if(paymentSheetResult instanceof PaymentSheetResult.Completed){
+
+            Toast.makeText(this, "Payment Success", Toast.LENGTH_SHORT).show();
+
         }
 
     }
