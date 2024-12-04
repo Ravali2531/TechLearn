@@ -14,7 +14,7 @@
 
     </androidx.recyclerview.widget.RecyclerView>
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
+    <Button
         android:id="@+id/uploadCourse"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -22,6 +22,7 @@
         android:layout_marginBottom="24dp"
         android:clickable="true"
         android:src="@drawable/add"
+        android:text="Add Course"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent" />
 

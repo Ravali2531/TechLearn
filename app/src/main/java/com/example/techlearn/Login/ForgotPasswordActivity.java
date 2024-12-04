@@ -80,8 +80,10 @@ public class ForgotPasswordActivity extends AppCompatActivity {
 
                         if(task.isSuccessful()){
                             loadindDalog.dismiss();
-                            Toast.makeText(ForgotPasswordActivity.this, "Check your email", Toast.LENGTH_SHORT).show();
-                            onBackPressed();
+                            Toast.makeText(ForgotPasswordActivity.this, "Check your email to reset your password", Toast.LENGTH_SHORT).show();
+                            Intent intent = new Intent(ForgotPasswordActivity.this, SignInActivity.class);
+                            startActivity(intent);
+                            finish();
                         }
                         else{
                             loadindDalog.dismiss();
