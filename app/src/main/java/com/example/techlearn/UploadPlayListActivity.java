@@ -132,6 +132,8 @@ public class UploadPlayListActivity extends AppCompatActivity {
                         if(snapshot.exists()){
                             list.clear();
 
+                            binding.nodataUploadPlayList.setVisibility(View.GONE);
+
                             for (DataSnapshot dataSnapshot: snapshot.getChildren()){
 
                                 PlayListModel model = dataSnapshot.getValue(PlayListModel.class);
@@ -143,6 +145,8 @@ public class UploadPlayListActivity extends AppCompatActivity {
                             loadingDialog.dismiss();
                         }
                         else{
+                            binding.nodataUploadPlayList.setText("No PlayLists Uploaded");
+                            binding.nodataUploadPlayList.setVisibility(View.VISIBLE);
                             loadingDialog.dismiss();
                         }
 

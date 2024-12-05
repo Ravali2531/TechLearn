@@ -35,8 +35,10 @@ import com.google.android.exoplayer2.PlaybackException;
 import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 import com.stripe.android.PaymentConfiguration;
@@ -80,6 +82,8 @@ public class PlayListActivity extends AppCompatActivity {
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom);
             return insets;
         });
+
+//        checkEnrollmentStatus();
 
         list = new ArrayList<>();
 
@@ -369,26 +373,62 @@ public class PlayListActivity extends AppCompatActivity {
 
     }
 
+//    private void playVideo(String videoUrl) {
+//
+//        if (introUrl != null && !introUrl.isEmpty()) {
+//            try {
+//                simpleExoPlayer = new SimpleExoPlayer.Builder(this).build();
+//                binding.exoplayer2.setPlayer(simpleExoPlayer);
+//                MediaItem mediaItem = MediaItem.fromUri(videoUrl);
+//                simpleExoPlayer.setMediaItem(mediaItem);
+//                simpleExoPlayer.prepare();
+//                simpleExoPlayer.play();
+//                binding.exoplayer2.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
+//                binding.exoplayer2.setControllerShowTimeoutMs(2000);
+//            } catch (Exception e) {
+//                Toast.makeText(this, "Error loading video", Toast.LENGTH_SHORT).show();
+//            }
+//        } else {
+//            Toast.makeText(this, "No introduction video available", Toast.LENGTH_SHORT).show();
+//        }
+//
+//    }
+
     private void playVideo(String videoUrl) {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseDatabase.getInstance().getReference("enrollments")
+                .child(userId)
+                .child(postId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            // User is enrolled, allow playback
+                            try {
+                                simpleExoPlayer = new SimpleExoPlayer.Builder(PlayListActivity.this).build();
+                                binding.exoplayer2.setPlayer(simpleExoPlayer);
+                                MediaItem mediaItem = MediaItem.fromUri(videoUrl);
+                                simpleExoPlayer.setMediaItem(mediaItem);
+                                simpleExoPlayer.prepare();
+                                simpleExoPlayer.play();
+                                binding.exoplayer2.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
+                                binding.exoplayer2.setControllerShowTimeoutMs(2000);
+                            } catch (Exception e) {
+                                Toast.makeText(PlayListActivity.this, "Error loading video", Toast.LENGTH_SHORT).show();
+                            }
+                        } else {
+                            // User is not enrolled, show error
+                            Toast.makeText(PlayListActivity.this, "You need to enroll to watch this video.", Toast.LENGTH_SHORT).show();
+                        }
+                    }
 
-        if (introUrl != null && !introUrl.isEmpty()) {
-            try {
-                simpleExoPlayer = new SimpleExoPlayer.Builder(this).build();
-                binding.exoplayer2.setPlayer(simpleExoPlayer);
-                MediaItem mediaItem = MediaItem.fromUri(videoUrl);
-                simpleExoPlayer.setMediaItem(mediaItem);
-                simpleExoPlayer.prepare();
-                simpleExoPlayer.play();
-                binding.exoplayer2.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
-                binding.exoplayer2.setControllerShowTimeoutMs(2000);
-            } catch (Exception e) {
-                Toast.makeText(this, "Error loading video", Toast.LENGTH_SHORT).show();
-            }
-        } else {
-            Toast.makeText(this, "No introduction video available", Toast.LENGTH_SHORT).show();
-        }
-
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(PlayListActivity.this, "Failed to check enrollment: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
 
     private void paymentFlow() {
 
@@ -408,15 +448,67 @@ public class PlayListActivity extends AppCompatActivity {
 
     }
 
+//    private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
+//
+//        if(paymentSheetResult instanceof PaymentSheetResult.Completed){
+//
+//            Toast.makeText(this, "Payment Success", Toast.LENGTH_SHORT).show();
+//
+//        }
+//
+//    }
+
     private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
-
-        if(paymentSheetResult instanceof PaymentSheetResult.Completed){
-
+        if (paymentSheetResult instanceof PaymentSheetResult.Completed) {
             Toast.makeText(this, "Payment Success", Toast.LENGTH_SHORT).show();
 
-        }
+            // Save enrollment to Firebase
+            String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+            FirebaseDatabase.getInstance().getReference("enrollments")
+                    .child(userId)
+                    .child(postId)
+                    .setValue(true) // Mark as enrolled
+                    .addOnSuccessListener(aVoid -> {
+                        Toast.makeText(PlayListActivity.this, "Enrollment Successful!", Toast.LENGTH_SHORT).show();
 
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(PlayListActivity.this, "Failed to save enrollment: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                    });
+
+            binding.btnEnroll.setEnabled(false);
+            binding.btnEnroll.setText("Enrolled");
+        }
     }
+//
+//    private void checkEnrollmentStatus() {
+//        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+//        DatabaseReference enrollmentsRef = FirebaseDatabase.getInstance().getReference("enrollments")
+//                .child(userId)
+//                .child(postId);
+//
+//        enrollmentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                if (snapshot.exists()) {
+//                    // User is already enrolled
+//                    binding.btnEnroll.setEnabled(false);
+//                    binding.btnEnroll.setText("Enrolled");
+//                } else {
+//                    // User is not enrolled
+//                    binding.btnEnroll.setEnabled(true);
+//                    binding.btnEnroll.setText("Enroll Now");
+//                }
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//                Toast.makeText(PlayListActivity.this, "Failed to check enrollment: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+//            }
+//        });
+//    }
+
+
 
     @Override
     public void onBackPressed() {

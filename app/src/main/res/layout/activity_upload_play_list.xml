@@ -44,16 +44,24 @@
         app:layout_constraintStart_toStartOf="@+id/uploadVideo"
         app:layout_constraintTop_toBottomOf="@+id/uploadVideo" />
 
-    <com.google.android.material.floatingactionbutton.FloatingActionButton
-        android:id="@+id/uploadPlayList"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginEnd="16dp"
-        android:layout_marginBottom="16dp"
-        android:clickable="true"
+
+    <TextView
+        android:id="@+id/nodataUploadPlayList"
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_marginTop="16dp"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:srcCompat="@drawable/add" />
+        app:layout_constraintHorizontal_bias="0.0"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/vTitle"
+        app:layout_constraintVertical_bias="1.0"
+        android:visibility="gone"
+        android:gravity="center"
+        android:textSize="15dp"
+        android:textColor="@color/background"
+        android:textStyle="bold"
+        android:text=""/>
 
     <androidx.recyclerview.widget.RecyclerView
         android:id="@+id/rvPlayList"
@@ -66,4 +74,17 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/vTitle"
         app:layout_constraintVertical_bias="1.0" />
+
+    <Button
+        android:id="@+id/uploadPlayList"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginEnd="16dp"
+        android:layout_marginBottom="16dp"
+        android:clickable="true"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        android:text="Upload Playlist"
+        app:srcCompat="@drawable/add" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>
