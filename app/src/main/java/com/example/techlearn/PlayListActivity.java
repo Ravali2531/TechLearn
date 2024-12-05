@@ -83,7 +83,7 @@ public class PlayListActivity extends AppCompatActivity {
             return insets;
         });
 
-//        checkEnrollmentStatus();
+
 
         list = new ArrayList<>();
 
@@ -153,6 +153,8 @@ public class PlayListActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         binding.rvPlayList.setLayoutManager(layoutManager);
 
+        checkEnrollmentStatus();
+
         adapter = new PlayListUserAdapter(this, list, new PlayListUserAdapter.videoListener() {
             @Override
             public void onClick(int position, String key, String videoUrl, int size) {
@@ -198,7 +200,7 @@ public class PlayListActivity extends AppCompatActivity {
                             JSONObject object = new JSONObject(response);
                             customerId = object.getString("id");
 
-                            Toast.makeText(PlayListActivity.this, customerId + " customer id", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(PlayListActivity.this, customerId + " customer id", Toast.LENGTH_SHORT).show();
                             getEmphericalKey();
 
                         } catch (JSONException e) {
@@ -240,7 +242,7 @@ public class PlayListActivity extends AppCompatActivity {
                             JSONObject object = new JSONObject(response);
                             ephericalKey = object.getString("id");
 
-                            Toast.makeText(PlayListActivity.this, ephericalKey + " epherical key", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(PlayListActivity.this, ephericalKey + " epherical key", Toast.LENGTH_SHORT).show();
 
                             getClientSecret(customerId, ephericalKey);
 
@@ -294,7 +296,7 @@ public class PlayListActivity extends AppCompatActivity {
                             JSONObject object = new JSONObject(response);
                             clientSecret = object.getString("client_secret");
 
-                            Toast.makeText(PlayListActivity.this, clientSecret + " client_secret", Toast.LENGTH_SHORT).show();
+//                            Toast.makeText(PlayListActivity.this, clientSecret + " client_secret", Toast.LENGTH_SHORT).show();
 
 
                         } catch (JSONException e) {
@@ -323,14 +325,27 @@ public class PlayListActivity extends AppCompatActivity {
             @Nullable
             @Override
             protected Map<String, String> getParams() throws AuthFailureError {
-
                 Map<String, String> params = new HashMap<>();
                 params.put("customer", customerId);
-                params.put("amount", "100"+"00");
-                params.put("currency","CAD");
+
+                // Convert the price to the smallest currency unit (e.g., cents for CAD)
+                String amountInCents = String.valueOf(price * 100);
+                params.put("amount", amountInCents);
+
+                params.put("currency", "CAD");
                 params.put("automatic_payment_methods[enabled]", "true");
                 return params;
             }
+
+//            protected Map<String, String> getParams() throws AuthFailureError {
+//
+//                Map<String, String> params = new HashMap<>();
+//                params.put("customer", customerId);
+//                params.put("amount", "100"+"00");
+//                params.put("currency","CAD");
+//                params.put("automatic_payment_methods[enabled]", "true");
+//                return params;
+//            }
         };
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
@@ -396,6 +411,7 @@ public class PlayListActivity extends AppCompatActivity {
 
     private void playVideo(String videoUrl) {
         String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+
         FirebaseDatabase.getInstance().getReference("enrollments")
                 .child(userId)
                 .child(postId)
@@ -403,31 +419,40 @@ public class PlayListActivity extends AppCompatActivity {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
-                            // User is enrolled, allow playback
+                            // User is enrolled, proceed with playback
                             try {
+                                if (simpleExoPlayer != null) {
+                                    simpleExoPlayer.release(); // Release the previous player if any
+                                }
+
                                 simpleExoPlayer = new SimpleExoPlayer.Builder(PlayListActivity.this).build();
                                 binding.exoplayer2.setPlayer(simpleExoPlayer);
+
                                 MediaItem mediaItem = MediaItem.fromUri(videoUrl);
                                 simpleExoPlayer.setMediaItem(mediaItem);
                                 simpleExoPlayer.prepare();
                                 simpleExoPlayer.play();
+
                                 binding.exoplayer2.setShowBuffering(PlayerView.SHOW_BUFFERING_ALWAYS);
                                 binding.exoplayer2.setControllerShowTimeoutMs(2000);
                             } catch (Exception e) {
+                                Log.e("PlayListActivity", "Error loading video: " + e.getMessage());
                                 Toast.makeText(PlayListActivity.this, "Error loading video", Toast.LENGTH_SHORT).show();
                             }
                         } else {
-                            // User is not enrolled, show error
+                            // User is not enrolled
                             Toast.makeText(PlayListActivity.this, "You need to enroll to watch this video.", Toast.LENGTH_SHORT).show();
                         }
                     }
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {
-                        Toast.makeText(PlayListActivity.this, "Failed to check enrollment: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                        Log.e("PlayListActivity", "Database error: " + error.getMessage());
+                        Toast.makeText(PlayListActivity.this, "Failed to check enrollment status.", Toast.LENGTH_SHORT).show();
                     }
                 });
     }
+
 
 
     private void paymentFlow() {
@@ -480,33 +505,32 @@ public class PlayListActivity extends AppCompatActivity {
             binding.btnEnroll.setText("Enrolled");
         }
     }
-//
-//    private void checkEnrollmentStatus() {
-//        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
-//        DatabaseReference enrollmentsRef = FirebaseDatabase.getInstance().getReference("enrollments")
-//                .child(userId)
-//                .child(postId);
-//
-//        enrollmentsRef.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot snapshot) {
-//                if (snapshot.exists()) {
-//                    // User is already enrolled
-//                    binding.btnEnroll.setEnabled(false);
-//                    binding.btnEnroll.setText("Enrolled");
-//                } else {
-//                    // User is not enrolled
-//                    binding.btnEnroll.setEnabled(true);
-//                    binding.btnEnroll.setText("Enroll Now");
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError error) {
-//                Toast.makeText(PlayListActivity.this, "Failed to check enrollment: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-//            }
-//        });
-//    }
+
+    private void checkEnrollmentStatus() {
+        String userId = FirebaseAuth.getInstance().getCurrentUser().getUid();
+        FirebaseDatabase.getInstance().getReference("enrollments")
+                .child(userId)
+                .child(postId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (!snapshot.exists()) {
+                            binding.btnEnroll.setVisibility(View.VISIBLE);
+//                            Toast.makeText(PlayListActivity.this, "Please enroll to access the course content.", Toast.LENGTH_SHORT).show();
+                        } else {
+                            binding.rvPlayList.setVisibility(View.VISIBLE);
+                            binding.btnEnroll.setEnabled(false);
+                            binding.btnEnroll.setText("Enrolled");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Log.e("PlayListActivity", "Error checking enrollment: " + error.getMessage());
+                    }
+                });
+    }
+
 
 
 
