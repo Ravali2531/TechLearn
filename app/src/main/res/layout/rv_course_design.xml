@@ -46,7 +46,7 @@
                 android:layout_gravity="center"
                 android:layout_marginRight="8dp"
                 android:layout_marginLeft="8dp"
-                android:text="@string/app_name" />
+                android:text="" />
 
             <TextView
                 android:id="@+id/coursePrice"

@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -30,6 +31,8 @@ import com.example.techlearn.Model.PlayListModel;
 import com.example.techlearn.databinding.ActivityPlayListBinding;
 import com.google.android.exoplayer2.ExoPlayer;
 import com.google.android.exoplayer2.MediaItem;
+import com.google.android.exoplayer2.PlaybackException;
+import com.google.android.exoplayer2.Player;
 import com.google.android.exoplayer2.SimpleExoPlayer;
 import com.google.android.exoplayer2.ui.PlayerView;
 import com.google.firebase.database.DataSnapshot;
@@ -170,7 +173,15 @@ public class PlayListActivity extends AppCompatActivity {
             @Override
             public void onClick(View view) {
 
-                paymentFlow();
+                if (clientSecret != null && !clientSecret.isEmpty() &&
+                        customerId != null && !customerId.isEmpty() &&
+                        ephericalKey != null && !ephericalKey.isEmpty()) {
+                    paymentFlow();
+                } else {
+                    Toast.makeText(PlayListActivity.this,
+                            "Error initializing payment. Please try again.",
+                            Toast.LENGTH_SHORT).show();
+                }
 
             }
         });
@@ -183,7 +194,7 @@ public class PlayListActivity extends AppCompatActivity {
                             JSONObject object = new JSONObject(response);
                             customerId = object.getString("id");
 
-                            Toast.makeText(PlayListActivity.this, customerId, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PlayListActivity.this, customerId + " customer id", Toast.LENGTH_SHORT).show();
                             getEmphericalKey();
 
                         } catch (JSONException e) {
@@ -206,32 +217,12 @@ public class PlayListActivity extends AppCompatActivity {
                 Map<String, String> header = new HashMap<>();
                 header.put("Authorization", "Bearer "+ secretKey);
 
-
                 return header;
             }
         };
 
         RequestQueue requestQueue = Volley.newRequestQueue(this);
         requestQueue.add(request);
-
-    }
-
-    private void paymentFlow() {
-
-        paymentSheet.presentWithPaymentIntent(clientSecret, new PaymentSheet.Configuration("TechLearn", new PaymentSheet.CustomerConfiguration(
-                customerId,
-                ephericalKey
-        )));
-
-    }
-
-    private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
-
-        if(paymentSheetResult instanceof PaymentSheetResult.Completed){
-
-            Toast.makeText(this, "Payment Success", Toast.LENGTH_SHORT).show();
-
-        }
 
     }
 
@@ -245,7 +236,7 @@ public class PlayListActivity extends AppCompatActivity {
                             JSONObject object = new JSONObject(response);
                             ephericalKey = object.getString("id");
 
-                            Toast.makeText(PlayListActivity.this, ephericalKey, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PlayListActivity.this, ephericalKey + " epherical key", Toast.LENGTH_SHORT).show();
 
                             getClientSecret(customerId, ephericalKey);
 
@@ -257,7 +248,7 @@ public class PlayListActivity extends AppCompatActivity {
             @Override
             public void onErrorResponse(VolleyError error) {
 
-                Toast.makeText(PlayListActivity.this, error.getLocalizedMessage(), Toast.LENGTH_SHORT).show();
+                Toast.makeText(PlayListActivity.this, error.getLocalizedMessage() + "can't gert", Toast.LENGTH_SHORT).show();
 
 
             }
@@ -299,7 +290,7 @@ public class PlayListActivity extends AppCompatActivity {
                             JSONObject object = new JSONObject(response);
                             clientSecret = object.getString("client_secret");
 
-                            Toast.makeText(PlayListActivity.this, clientSecret, Toast.LENGTH_SHORT).show();
+                            Toast.makeText(PlayListActivity.this, clientSecret + " client_secret", Toast.LENGTH_SHORT).show();
 
 
                         } catch (JSONException e) {
@@ -331,8 +322,8 @@ public class PlayListActivity extends AppCompatActivity {
 
                 Map<String, String> params = new HashMap<>();
                 params.put("customer", customerId);
-                params.put("amount","100"+"00");
-                params.put("currency","USD");
+                params.put("amount", "100"+"00");
+                params.put("currency","CAD");
                 params.put("automatic_payment_methods[enabled]", "true");
                 return params;
             }
@@ -395,6 +386,34 @@ public class PlayListActivity extends AppCompatActivity {
             }
         } else {
             Toast.makeText(this, "No introduction video available", Toast.LENGTH_SHORT).show();
+        }
+
+    }
+
+    private void paymentFlow() {
+
+        if (clientSecret != null && !clientSecret.isEmpty() && ephericalKey != null) {
+            paymentSheet.presentWithPaymentIntent(
+                    clientSecret,
+                    new PaymentSheet.Configuration(
+                            "TechLearn",
+                            new PaymentSheet.CustomerConfiguration(customerId, ephericalKey)
+                    )
+            );
+        } else {
+            Log.e("PaymentFlow", "Missing clientSecret or ephericalKey");
+            Toast.makeText(this, "Payment parameters are invalid", Toast.LENGTH_SHORT).show();
+        }
+
+
+    }
+
+    private void onPaymentResult(PaymentSheetResult paymentSheetResult) {
+
+        if(paymentSheetResult instanceof PaymentSheetResult.Completed){
+
+            Toast.makeText(this, "Payment Success", Toast.LENGTH_SHORT).show();
+
         }
 
     }

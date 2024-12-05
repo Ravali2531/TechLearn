@@ -166,4 +166,15 @@
         </LinearLayout>
     </androidx.cardview.widget.CardView>
 
+    <!-- Floating Action Button -->
+    <com.google.android.material.floatingactionbutton.FloatingActionButton
+        android:id="@+id/fab_edit_profile"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="end|bottom"
+        android:layout_margin="16dp"
+        android:src="@drawable/edit_profile"
+        android:contentDescription="Edit Profile"
+        android:backgroundTint="@color/white" />
+
 </LinearLayout>

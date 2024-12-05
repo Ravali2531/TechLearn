@@ -65,6 +65,8 @@ public class SignUpActivity extends AppCompatActivity {
                 }
                 else if(password.isEmpty()){
                     binding.edtPassword.setError("Enter your password");
+                }else if(role.equals("Choose One:")){
+                    Toast.makeText(SignUpActivity.this, "Please select a role", Toast.LENGTH_SHORT).show();
                 }
                 else{
                     signup(name, email, password, role);
@@ -107,6 +109,8 @@ public class SignUpActivity extends AppCompatActivity {
                                                             @Override
                                                             public void onComplete(@NonNull Task<Void> task) {
                                                                 Toast.makeText(SignUpActivity.this, "Registered successfully. Please verify your email.", Toast.LENGTH_SHORT).show();
+
+                                                                auth.signOut();
                                                                 onBackPressed();
                                                             }
                                                         });

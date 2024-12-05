@@ -51,6 +51,7 @@ dependencies {
 
     // Stripe
     implementation("com.stripe:stripe-android:20.24.1")
+//    implementation("com.stripe:stripe-android:21.2.0")
 
     // Volley
     implementation("com.android.volley:volley:1.2.1")

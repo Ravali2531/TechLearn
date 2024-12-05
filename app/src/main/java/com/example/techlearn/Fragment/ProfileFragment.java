@@ -16,12 +16,11 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Toast;
 
+import com.example.techlearn.EditProfile;
 import com.example.techlearn.Login.SignInActivity;
 import com.example.techlearn.Model.UserModel;
 import com.example.techlearn.R;
 import com.example.techlearn.databinding.FragmentProfileBinding;
-import com.google.android.gms.tasks.OnFailureListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -42,6 +41,7 @@ public class ProfileFragment extends Fragment {
     FirebaseStorage storage;
     Dialog loadingDialog;
     Uri profileUri;
+    UserModel currentUser;
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -68,25 +68,22 @@ public class ProfileFragment extends Fragment {
             loadingDialog.setCancelable(false);
         }
 
-        loadProfileImage();
+        loadProfile();
 
-        // Choose a profile image
-        binding.profileImage.setOnClickListener(view -> {
-            Intent intent = new Intent();
-            intent.setAction(Intent.ACTION_GET_CONTENT);
-            intent.setType("image/*");
-            startActivityForResult(intent, 1);
+        // Open Edit Profile activity
+        binding.fabEditProfile.setOnClickListener(view -> {
+            if (currentUser != null) {
+                Intent intent = new Intent(getContext(), EditProfile.class);
+                intent.putExtra("name", currentUser.getName());
+                intent.putExtra("email", currentUser.getEmail());
+                intent.putExtra("profile", currentUser.getProfile());
+                startActivity(intent);
+            } else {
+                Toast.makeText(getContext(), "Failed to load user details", Toast.LENGTH_SHORT).show();
+            }
         });
 
-        // Terms of Service
-        binding.cardTerms.setOnClickListener(view ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://www.example.com/terms"))));
-
-        // Rate App
-        binding.cardRate.setOnClickListener(view ->
-                startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse("https://play.google.com/store/apps/details?id=" + getContext().getPackageName()))));
-
-        // Logout
+        // Logout functionality
         binding.cardLogout.setOnClickListener(view -> {
             auth.signOut();
             Intent intent = new Intent(getContext(), SignInActivity.class);
@@ -94,21 +91,29 @@ public class ProfileFragment extends Fragment {
             startActivity(intent);
         });
 
+        // Choose profile image
+        binding.profileImage.setOnClickListener(view -> {
+            Intent intent = new Intent();
+            intent.setAction(Intent.ACTION_GET_CONTENT);
+            intent.setType("image/*");
+            startActivityForResult(intent, 1);
+        });
+
         return binding.getRoot();
     }
 
-    private void loadProfileImage() {
+    private void loadProfile() {
         database.getReference().child("user_details").child(auth.getUid())
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         if (snapshot.exists()) {
-                            UserModel model = snapshot.getValue(UserModel.class);
-                            if (model != null) {
-                                binding.userName.setText(model.getName() != null ? model.getName() : "User");
-                                binding.userEmail.setText(model.getEmail() != null ? model.getEmail() : "example@gmail.com");
+                            currentUser = snapshot.getValue(UserModel.class);
+                            if (currentUser != null) {
+                                binding.userName.setText(currentUser.getName() != null ? currentUser.getName() : "User");
+                                binding.userEmail.setText(currentUser.getEmail() != null ? currentUser.getEmail() : "example@gmail.com");
 
-                                String profileUrl = model.getProfile();
+                                String profileUrl = currentUser.getProfile();
                                 if (profileUrl != null && !profileUrl.isEmpty()) {
                                     Picasso.get().load(profileUrl)
                                             .placeholder(R.drawable.user_profile)

@@ -85,6 +85,7 @@ public class HomeFragment extends Fragment {
 
                         if(snapshot.exists()){
                             list.clear();
+                            binding.nodataUploadCourse.setVisibility(View.GONE);
 
                             for (DataSnapshot dataSnapshot: snapshot.getChildren()){
 
@@ -97,6 +98,8 @@ public class HomeFragment extends Fragment {
                             loadingDialog.dismiss();
                         }
                         else{
+                            binding.nodataUploadCourse.setText("Click on Upload course to add a course.");
+                            binding.nodataUploadCourse.setVisibility(View.VISIBLE);
                             loadingDialog.dismiss();
                         }
 
