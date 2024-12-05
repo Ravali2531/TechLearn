@@ -89,15 +89,16 @@ public class UploadCourseActivity extends AppCompatActivity {
                 String title = binding.edtTitle.getText().toString();
                 String price = binding.edtPrice.getText().toString();
                 String duration = binding.edtDuration.getText().toString();
-                String rating = binding.edtRating.getText().toString();
+                String rating = "0";
                 String description = binding.edtDescription.getText().toString();
 
-//                if(imageUri == null){
-//                    Toast.makeText(UploadCourseActivity.this, "Select thumbnail image", Toast.LENGTH_SHORT).show();
-//                }
-//                else
-
-                if(title.isEmpty()){
+                if(imageUri == null){
+                    Toast.makeText(UploadCourseActivity.this, "Select thumbnail image", Toast.LENGTH_SHORT).show();
+                }
+                else if (videoUri == null) {
+                    Toast.makeText(UploadCourseActivity.this, "Select intro video", Toast.LENGTH_SHORT).show();
+                }
+                else if(title.isEmpty()){
 
                     binding.edtTitle.setError("Enter title");
 
@@ -110,19 +111,13 @@ public class UploadCourseActivity extends AppCompatActivity {
 
                     binding.edtDuration.setError("Enter Duration");
 
-                } else if(rating.isEmpty()){
-
-                    binding.edtRating.setError("Enter rating");
-
-                }else if(description.isEmpty()){
+                } else if(description.isEmpty()){
 
                     binding.edtDescription.setError("Enter description");
 
                 }else{
                     uploadCourse(title, price, duration, rating, description, imageUri);
                 }
-
-
 
             }
         });

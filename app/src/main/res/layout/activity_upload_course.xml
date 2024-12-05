@@ -123,16 +123,16 @@
             android:inputType="text"
             android:padding="15dp" />
 
-        <EditText
-            android:id="@+id/edtRating"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="20dp"
-            android:background="@drawable/edt_shape"
-            android:ems="10"
-            android:hint="Rating"
-            android:inputType="text"
-            android:padding="15dp" />
+<!--        <EditText-->
+<!--            android:id="@+id/edtRating"-->
+<!--            android:layout_width="match_parent"-->
+<!--            android:layout_height="wrap_content"-->
+<!--            android:layout_marginTop="20dp"-->
+<!--            android:background="@drawable/edt_shape"-->
+<!--            android:ems="10"-->
+<!--            android:hint="Rating"-->
+<!--            android:inputType="text"-->
+<!--            android:padding="15dp" />-->
 
         <EditText
             android:id="@+id/edtDescription"

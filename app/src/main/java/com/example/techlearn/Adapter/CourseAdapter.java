@@ -54,8 +54,8 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
                 .into(holder.binding.courseImage);
 
         holder.binding.courseTitle.setText(model.getTitle());
-        holder.binding.coursePrice.setText(model.getPrice()+"");
-        holder.binding.name.setText(model.getPostedBy());
+        holder.binding.coursePrice.setText("$ " + model.getPrice());
+//        holder.binding.name.setText(model.getPostedBy());
 
         database.getReference().child("admin_details").child(auth.getUid()).addValueEventListener(new ValueEventListener() {
             @Override
