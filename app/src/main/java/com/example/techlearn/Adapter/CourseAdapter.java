@@ -9,6 +9,7 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.techlearn.CourseDetailActivity;
 import com.example.techlearn.Model.CourseModel;
 import com.example.techlearn.Model.UserModel;
 import com.example.techlearn.R;
@@ -83,7 +84,7 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, UploadPlayListActivity.class);
+                Intent intent = new Intent(context, CourseDetailActivity.class);
                 intent.putExtra("postId", model.getPostId());
                 context.startActivity(intent);
             }

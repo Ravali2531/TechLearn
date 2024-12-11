@@ -188,6 +188,8 @@ public class UploadPlayListActivity extends AppCompatActivity {
                                         loadingDialog.dismiss();
                                         Toast.makeText(UploadPlayListActivity.this, "Course Uploaded", Toast.LENGTH_SHORT).show();
                                         binding.vTitle.setText("");
+                                        // Restore the original image after upload
+                                        binding.uploadVideo.setImageResource(R.drawable.upload_image);
                                     }
                                 });
 

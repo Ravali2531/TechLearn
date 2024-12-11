@@ -115,11 +115,30 @@ public class UploadCourseActivity extends AppCompatActivity {
 
                     binding.edtDescription.setError("Enter description");
 
-                }else{
-                    uploadCourse(title, price, duration, rating, description, imageUri);
-                }
+                } else {
+                        // Validate price and duration for negative values
+                        try {
+                            long priceValue = Long.parseLong(price);
+                            if (priceValue < 0) {
+                                binding.edtPrice.setError("Price cannot be negative");
+                                return;
+                            }
 
-            }
+                            long durationValue = Long.parseLong(duration);
+                            if (durationValue < 0) {
+                                binding.edtDuration.setError("Duration cannot be negative");
+                                return;
+                            }
+
+                            // Proceed to upload the course if all validations pass
+                            uploadCourse(title, price, duration, rating, description, imageUri);
+
+                        } catch (NumberFormatException e) {
+                            Toast.makeText(UploadCourseActivity.this, "Enter valid numbers for price and duration", Toast.LENGTH_SHORT).show();
+                        }
+                    }
+//                    uploadCourse(title, price, duration, rating, description, imageUri);
+                }
         });
 
     }
