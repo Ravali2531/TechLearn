@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EditCourseActivity">
+
+    <!-- Title Field -->
+    <EditText
+        android:id="@+id/editCourseTitle"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Course Title"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent"
+        android:layout_margin="16dp"
+        android:inputType="text" />
+
+    <!-- Description Field -->
+    <EditText
+        android:id="@+id/editCourseDescription"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Course Description"
+        android:textSize="14sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editCourseTitle"
+        android:layout_margin="16dp"
+        android:inputType="textMultiLine" />
+
+    <!-- Price Field -->
+    <EditText
+        android:id="@+id/editCoursePrice"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Course Price"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editCourseDescription"
+        android:layout_margin="16dp"
+        android:inputType="numberDecimal" />
+
+    <!-- Duration Field -->
+    <EditText
+        android:id="@+id/editCourseDuration"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:hint="Course Duration (hours)"
+        android:textSize="16sp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editCoursePrice"
+        android:layout_margin="16dp"
+        android:inputType="number" />
+
+    <!-- Save Button -->
+    <Button
+        android:id="@+id/saveCourseButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Save Changes"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/editCourseDuration"
+        android:layout_marginTop="32dp"
+        android:textSize="16sp"/>
+
+</androidx.constraintlayout.widget.ConstraintLayout>

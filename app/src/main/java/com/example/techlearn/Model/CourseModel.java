@@ -22,6 +22,15 @@ public class CourseModel {
         this.enable = enable;
     }
 
+    public CourseModel(String title, String description, long price, String duration) {
+
+        this.title = title;
+        this.duration = duration;
+        this.description = description;
+        this.price = price;
+    }
+
+
     public String getTitle() {
         return title;
     }
