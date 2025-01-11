@@ -29,16 +29,20 @@
         android:padding="16dp">
 
         <!-- Thumbnail -->
+
+        <!-- Title -->
         <ImageView
             android:id="@+id/courseThumbnail"
             android:layout_width="0dp"
             android:layout_height="200dp"
+            android:layout_marginTop="124dp"
+            android:layout_marginBottom="30dp"
             android:scaleType="centerCrop"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
-        <!-- Title -->
         <TextView
             android:id="@+id/courseTitle"
             android:layout_width="wrap_content"
@@ -84,6 +88,18 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintTop_toBottomOf="@id/coursePrice" />
 
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/uploadPlaylist"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="16dp"
+            android:layout_marginBottom="36dp"
+            android:text="Go to Playlist"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintStart_toStartOf="parent" />
+
     </androidx.constraintlayout.widget.ConstraintLayout>
 
     <!-- Floating Action Button -->
@@ -95,5 +111,6 @@
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="bottom|end"
         android:layout_margin="16dp" />
+
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

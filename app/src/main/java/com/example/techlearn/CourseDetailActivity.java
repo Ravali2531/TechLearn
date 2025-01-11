@@ -12,6 +12,7 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.techlearn.Model.CourseModel;
+import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -23,8 +24,9 @@ public class CourseDetailActivity extends AppCompatActivity {
     private ImageView courseThumbnail;
     private TextView courseTitle, courseDescription, coursePrice, courseDuration;
     private FloatingActionButton fabEditCourse;
+    private MaterialButton uploadPlaylist;  // New button for uploading playlist
 
-    private String postId; // Use postId instead of courseId
+    private String postId;  // Use postId instead of courseId
     private FirebaseDatabase database;
 
     @Override
@@ -43,6 +45,7 @@ public class CourseDetailActivity extends AppCompatActivity {
         coursePrice = findViewById(R.id.coursePrice);
         courseDuration = findViewById(R.id.courseDuration);
         fabEditCourse = findViewById(R.id.fabEditCourse);
+        uploadPlaylist = findViewById(R.id.uploadPlaylist);  // New button
 
         // Get postId from Intent
         postId = getIntent().getStringExtra("postId");
@@ -52,13 +55,17 @@ public class CourseDetailActivity extends AppCompatActivity {
         loadCourseDetails();
 
         // FAB Edit button
-        fabEditCourse.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(CourseDetailActivity.this, EditCourseActivity.class);
-                intent.putExtra("postId", postId);
-                startActivity(intent);
-            }
+        fabEditCourse.setOnClickListener(view -> {
+            Intent intent = new Intent(CourseDetailActivity.this, EditCourseActivity.class);
+            intent.putExtra("postId", postId);
+            startActivity(intent);
+        });
+
+        // Upload Playlist button
+        uploadPlaylist.setOnClickListener(view -> {
+            Intent intent = new Intent(CourseDetailActivity.this, UploadPlayListActivity.class);
+            intent.putExtra("postId", postId);
+            startActivity(intent);
         });
     }
 
