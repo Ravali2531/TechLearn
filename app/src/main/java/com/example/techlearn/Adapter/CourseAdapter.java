@@ -107,4 +107,9 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
             binding = RvCourseDesignBinding.bind(itemView);
         }
     }
+
+    public void updateList(ArrayList<CourseModel> filteredList) {
+        list = filteredList;
+        notifyDataSetChanged();
+    }
 }
