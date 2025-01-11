@@ -26,83 +26,120 @@
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:padding="16dp">
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-        <!-- Thumbnail -->
-
-        <!-- Title -->
+        <!-- Course Thumbnail -->
         <ImageView
             android:id="@+id/courseThumbnail"
-            android:layout_width="0dp"
+            android:layout_width="match_parent"
             android:layout_height="200dp"
-            android:layout_marginTop="124dp"
-            android:layout_marginBottom="30dp"
             android:scaleType="centerCrop"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Course Name -->
+        <TextView
+            android:id="@+id/courseTitleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Course Name:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/courseThumbnail"
+            app:layout_constraintStart_toStartOf="parent" />
 
         <TextView
             android:id="@+id/courseTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/courseTitleLabel"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Course Description -->
+        <TextView
+            android:id="@+id/courseDescriptionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
+            android:text="Description:"
             android:textStyle="bold"
             android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/courseThumbnail" />
+            app:layout_constraintTop_toBottomOf="@id/courseTitle"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Description -->
         <TextView
             android:id="@+id/courseDescription"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/courseDescriptionLabel"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Course Price -->
+        <TextView
+            android:id="@+id/coursePriceLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/courseTitle" />
+            android:text="Price:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/courseDescription"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Price -->
         <TextView
             android:id="@+id/coursePrice"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="8dp"
+            app:layout_constraintTop_toBottomOf="@id/coursePriceLabel"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <!-- Course Duration -->
+        <TextView
+            android:id="@+id/courseDurationLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/courseDescription" />
+            android:text="Duration:"
+            android:textStyle="bold"
+            android:layout_marginTop="16dp"
+            app:layout_constraintTop_toBottomOf="@id/coursePrice"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Duration -->
         <TextView
             android:id="@+id/courseDuration"
-            android:layout_width="wrap_content"
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
             android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/coursePrice" />
+            app:layout_constraintTop_toBottomOf="@id/courseDurationLabel"
+            app:layout_constraintStart_toStartOf="parent" />
 
+        <!-- Go to Playlist Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/uploadPlaylist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
-            android:layout_marginBottom="36dp"
+            android:layout_marginTop="16dp"
             android:text="Go to Playlist"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/courseDuration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- View Enrolled Members Button -->
+        <com.google.android.material.button.MaterialButton
+            android:id="@+id/viewEnrolledMembersButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="16dp"
+            android:text="View Enrolled Members"
+            app:layout_constraintTop_toBottomOf="@id/uploadPlaylist"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-    <!-- Floating Action Button -->
+    <!-- Floating Action Button for Editing Course -->
     <com.google.android.material.floatingactionbutton.FloatingActionButton
         android:id="@+id/fabEditCourse"
         android:layout_width="wrap_content"
@@ -111,6 +148,5 @@
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="bottom|end"
         android:layout_margin="16dp" />
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

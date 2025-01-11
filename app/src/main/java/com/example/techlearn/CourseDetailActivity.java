@@ -2,16 +2,18 @@ package com.example.techlearn;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.view.View;
+import android.view.MenuItem;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
 import com.example.techlearn.Model.CourseModel;
+import com.example.techlearn.Model.UserModel;
 import com.google.android.material.button.MaterialButton;
 import com.google.android.material.floatingactionbutton.FloatingActionButton;
 import com.google.firebase.database.DataSnapshot;
@@ -19,14 +21,19 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class CourseDetailActivity extends AppCompatActivity {
+
+    private static final int EDIT_COURSE_REQUEST_CODE = 100;
 
     private ImageView courseThumbnail;
     private TextView courseTitle, courseDescription, coursePrice, courseDuration;
     private FloatingActionButton fabEditCourse;
-    private MaterialButton uploadPlaylist;  // New button for uploading playlist
+    private MaterialButton uploadPlaylist, viewEnrolledMembersButton;
 
-    private String postId;  // Use postId instead of courseId
+    private String postId;
     private FirebaseDatabase database;
 
     @Override
@@ -37,6 +44,10 @@ public class CourseDetailActivity extends AppCompatActivity {
         // Initialize Toolbar
         androidx.appcompat.widget.Toolbar toolbar = findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setTitle("Course Details");
+        }
 
         // Initialize Views
         courseThumbnail = findViewById(R.id.courseThumbnail);
@@ -45,7 +56,8 @@ public class CourseDetailActivity extends AppCompatActivity {
         coursePrice = findViewById(R.id.coursePrice);
         courseDuration = findViewById(R.id.courseDuration);
         fabEditCourse = findViewById(R.id.fabEditCourse);
-        uploadPlaylist = findViewById(R.id.uploadPlaylist);  // New button
+        uploadPlaylist = findViewById(R.id.uploadPlaylist);
+        viewEnrolledMembersButton = findViewById(R.id.viewEnrolledMembersButton);
 
         // Get postId from Intent
         postId = getIntent().getStringExtra("postId");
@@ -58,12 +70,19 @@ public class CourseDetailActivity extends AppCompatActivity {
         fabEditCourse.setOnClickListener(view -> {
             Intent intent = new Intent(CourseDetailActivity.this, EditCourseActivity.class);
             intent.putExtra("postId", postId);
-            startActivity(intent);
+            startActivityForResult(intent, EDIT_COURSE_REQUEST_CODE);
         });
 
         // Upload Playlist button
         uploadPlaylist.setOnClickListener(view -> {
             Intent intent = new Intent(CourseDetailActivity.this, UploadPlayListActivity.class);
+            intent.putExtra("postId", postId);
+            startActivity(intent);
+        });
+
+        // View Enrolled Members button
+        viewEnrolledMembersButton.setOnClickListener(view -> {
+            Intent intent = new Intent(CourseDetailActivity.this, EnrolledMembers.class);
             intent.putExtra("postId", postId);
             startActivity(intent);
         });
@@ -76,16 +95,16 @@ public class CourseDetailActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     CourseModel course = snapshot.getValue(CourseModel.class);
 
-                    // Populate UI with course data
-                    Glide.with(CourseDetailActivity.this).load(course.getThumbnail()).into(courseThumbnail);
-                    courseTitle.setText(course.getTitle());
-                    courseDescription.setText(course.getDescription());
-                    coursePrice.setText("$" + course.getPrice());
-                    courseDuration.setText(course.getDuration() + " hrs");
+                    if (course != null) {
+                        Glide.with(CourseDetailActivity.this).load(course.getThumbnail()).into(courseThumbnail);
+                        courseTitle.setText(course.getTitle());
+                        courseDescription.setText(course.getDescription());
+                        coursePrice.setText("$" + course.getPrice());
+                        courseDuration.setText(course.getDuration() + " hrs");
 
-                    // Set Toolbar title to course title
-                    if (getSupportActionBar() != null) {
-                        getSupportActionBar().setTitle(course.getTitle());
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setTitle(course.getTitle());
+                        }
                     }
                 } else {
                     Toast.makeText(CourseDetailActivity.this, "Course not found", Toast.LENGTH_SHORT).show();
@@ -98,5 +117,30 @@ public class CourseDetailActivity extends AppCompatActivity {
                 Toast.makeText(CourseDetailActivity.this, "Error loading course: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == EDIT_COURSE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            courseTitle.setText(data.getStringExtra("title"));
+            courseDescription.setText(data.getStringExtra("description"));
+            coursePrice.setText("$" + data.getLongExtra("price", 0));
+            courseDuration.setText(data.getStringExtra("duration") + " hrs");
+
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(data.getStringExtra("title"));
+            }
+        }
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            finish();
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
