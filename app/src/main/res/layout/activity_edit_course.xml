@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout
+<androidx.coordinatorlayout.widget.CoordinatorLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
@@ -7,68 +7,140 @@
     android:layout_height="match_parent"
     tools:context=".EditCourseActivity">
 
-    <!-- Title Field -->
-    <EditText
-        android:id="@+id/editCourseTitle"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Course Title"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        android:layout_margin="16dp"
-        android:inputType="text" />
+    <!-- App Bar -->
+    <com.google.android.material.appbar.AppBarLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
 
-    <!-- Description Field -->
-    <EditText
-        android:id="@+id/editCourseDescription"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Course Description"
-        android:textSize="14sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editCourseTitle"
-        android:layout_margin="16dp"
-        android:inputType="textMultiLine" />
+        <!-- Toolbar -->
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/toolbar"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="?attr/colorPrimary"
+            android:title="Edit Course"
+            android:titleTextColor="@android:color/white"
+            app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+    </com.google.android.material.appbar.AppBarLayout>
 
-    <!-- Price Field -->
-    <EditText
-        android:id="@+id/editCoursePrice"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Course Price"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editCourseDescription"
-        android:layout_margin="16dp"
-        android:inputType="numberDecimal" />
+    <!-- Content Layout -->
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:padding="16dp"
+        app:layout_behavior="@string/appbar_scrolling_view_behavior">
 
-    <!-- Duration Field -->
-    <EditText
-        android:id="@+id/editCourseDuration"
-        android:layout_width="0dp"
-        android:layout_height="wrap_content"
-        android:hint="Course Duration (hours)"
-        android:textSize="16sp"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editCoursePrice"
-        android:layout_margin="16dp"
-        android:inputType="number" />
+        <!-- Course Name Label -->
+        <TextView
+            android:id="@+id/courseTitleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Course Name:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
 
-    <!-- Save Button -->
-    <Button
-        android:id="@+id/saveCourseButton"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Save Changes"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/editCourseDuration"
-        android:layout_marginTop="32dp"
-        android:textSize="16sp"/>
+        <!-- Course Name Field -->
+        <EditText
+            android:id="@+id/editCourseTitle"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter Course Name"
+            android:textSize="16sp"
+            android:inputType="text"
+            app:layout_constraintTop_toBottomOf="@id/courseTitleLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp" />
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+        <!-- Description Label -->
+        <TextView
+            android:id="@+id/courseDescriptionLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Description:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/editCourseTitle"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- Description Field -->
+        <EditText
+            android:id="@+id/editCourseDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter Course Description"
+            android:textSize="14sp"
+            android:inputType="textMultiLine"
+            app:layout_constraintTop_toBottomOf="@id/courseDescriptionLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp" />
+
+        <!-- Price Label -->
+        <TextView
+            android:id="@+id/coursePriceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Price:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/editCourseDescription"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- Price Field -->
+        <EditText
+            android:id="@+id/editCoursePrice"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter Course Price"
+            android:textSize="16sp"
+            android:inputType="numberDecimal"
+            app:layout_constraintTop_toBottomOf="@id/coursePriceLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp" />
+
+        <!-- Duration Label -->
+        <TextView
+            android:id="@+id/courseDurationLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duration:"
+            android:textStyle="bold"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/editCoursePrice"
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginTop="16dp" />
+
+        <!-- Duration Field -->
+        <EditText
+            android:id="@+id/editCourseDuration"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:hint="Enter Duration (hours)"
+            android:textSize="16sp"
+            android:inputType="number"
+            app:layout_constraintTop_toBottomOf="@id/courseDurationLabel"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="8dp" />
+
+        <!-- Save Button -->
+        <Button
+            android:id="@+id/saveCourseButton"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Save Changes"
+            android:textSize="16sp"
+            app:layout_constraintTop_toBottomOf="@id/editCourseDuration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            android:layout_marginTop="32dp" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+</androidx.coordinatorlayout.widget.CoordinatorLayout>

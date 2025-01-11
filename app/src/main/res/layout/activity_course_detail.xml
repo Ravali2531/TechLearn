@@ -15,8 +15,10 @@
         <!-- Toolbar -->
         <androidx.appcompat.widget.Toolbar
             android:id="@+id/toolbar"
+            android:textColor="@color/white"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
+
             android:background="?attr/colorPrimary"
             android:titleTextColor="@android:color/white"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
@@ -30,13 +32,13 @@
 
         <!-- Thumbnail -->
 
-        <!-- Title -->
+        <!-- Course Name -->
+
         <ImageView
             android:id="@+id/courseThumbnail"
             android:layout_width="0dp"
             android:layout_height="200dp"
-            android:layout_marginTop="124dp"
-            android:layout_marginBottom="30dp"
+            android:layout_marginTop="76dp"
             android:scaleType="centerCrop"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
@@ -44,61 +46,96 @@
             app:layout_constraintTop_toTopOf="parent" />
 
         <TextView
+            android:id="@+id/courseTitleLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Course Name:"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/courseThumbnail"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <TextView
             android:id="@+id/courseTitle"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="18sp"
-            android:textStyle="bold"
-            android:layout_marginTop="16dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/courseThumbnail" />
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/courseThumbnail"
+            app:layout_constraintStart_toEndOf="@id/courseTitleLabel" />
 
-        <!-- Description -->
+        <!-- Course Description -->
         <TextView
-            android:id="@+id/courseDescription"
+            android:id="@+id/courseDescriptionLabel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/courseTitle" />
+            android:text="Description:"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/courseTitleLabel"
+            app:layout_constraintStart_toStartOf="parent" />
 
-        <!-- Price -->
+        <TextView
+            android:id="@+id/courseDescription"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/courseTitle"
+            app:layout_constraintStart_toEndOf="@id/courseDescriptionLabel"
+            app:layout_constraintEnd_toEndOf="parent" />
+
+        <!-- Course Price -->
+        <TextView
+            android:id="@+id/coursePriceLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Price:"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/courseDescription"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <TextView
             android:id="@+id/coursePrice"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="16sp"
-            android:textColor="@color/black"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/courseDescription" />
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/courseDescription"
+            app:layout_constraintStart_toEndOf="@id/coursePriceLabel" />
 
-        <!-- Duration -->
+        <!-- Course Duration -->
+        <TextView
+            android:id="@+id/courseDurationLabel"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Duration:"
+            android:textStyle="bold"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/coursePrice"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <TextView
             android:id="@+id/courseDuration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:textSize="14sp"
-            android:layout_marginTop="8dp"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/coursePrice" />
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="10dp"
+            app:layout_constraintTop_toBottomOf="@id/coursePrice"
+            app:layout_constraintStart_toEndOf="@id/courseDurationLabel" />
 
+        <!-- Go to Playlist Button -->
         <com.google.android.material.button.MaterialButton
             android:id="@+id/uploadPlaylist"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_margin="16dp"
+            android:layout_marginTop="16dp"
             android:layout_marginBottom="36dp"
             android:text="Go to Playlist"
-            app:layout_constraintBottom_toBottomOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintHorizontal_bias="0.0"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintTop_toBottomOf="@id/courseDuration"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintEnd_toEndOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -111,6 +148,5 @@
         app:layout_anchor="@id/toolbar"
         app:layout_anchorGravity="bottom|end"
         android:layout_margin="16dp" />
-
 
 </androidx.coordinatorlayout.widget.CoordinatorLayout>

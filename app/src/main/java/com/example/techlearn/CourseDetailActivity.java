@@ -2,12 +2,14 @@ package com.example.techlearn;
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.Glide;
@@ -21,12 +23,14 @@ import com.google.firebase.database.ValueEventListener;
 
 public class CourseDetailActivity extends AppCompatActivity {
 
+    private static final int EDIT_COURSE_REQUEST_CODE = 100;
+
     private ImageView courseThumbnail;
     private TextView courseTitle, courseDescription, coursePrice, courseDuration;
     private FloatingActionButton fabEditCourse;
-    private MaterialButton uploadPlaylist;  // New button for uploading playlist
+    private MaterialButton uploadPlaylist;
 
-    private String postId;  // Use postId instead of courseId
+    private String postId;
     private FirebaseDatabase database;
 
     @Override
@@ -45,11 +49,17 @@ public class CourseDetailActivity extends AppCompatActivity {
         coursePrice = findViewById(R.id.coursePrice);
         courseDuration = findViewById(R.id.courseDuration);
         fabEditCourse = findViewById(R.id.fabEditCourse);
-        uploadPlaylist = findViewById(R.id.uploadPlaylist);  // New button
+        uploadPlaylist = findViewById(R.id.uploadPlaylist);
 
         // Get postId from Intent
         postId = getIntent().getStringExtra("postId");
         database = FirebaseDatabase.getInstance();
+
+        // Enable the Back button
+        if (getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeAsUpIndicator(R.drawable.ic_back);
+        }
 
         // Load course details
         loadCourseDetails();
@@ -58,7 +68,7 @@ public class CourseDetailActivity extends AppCompatActivity {
         fabEditCourse.setOnClickListener(view -> {
             Intent intent = new Intent(CourseDetailActivity.this, EditCourseActivity.class);
             intent.putExtra("postId", postId);
-            startActivity(intent);
+            startActivityForResult(intent, EDIT_COURSE_REQUEST_CODE);
         });
 
         // Upload Playlist button
@@ -69,6 +79,7 @@ public class CourseDetailActivity extends AppCompatActivity {
         });
     }
 
+    // Load course details from Firebase
     private void loadCourseDetails() {
         database.getReference().child("course").child(postId).addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
@@ -76,16 +87,18 @@ public class CourseDetailActivity extends AppCompatActivity {
                 if (snapshot.exists()) {
                     CourseModel course = snapshot.getValue(CourseModel.class);
 
-                    // Populate UI with course data
-                    Glide.with(CourseDetailActivity.this).load(course.getThumbnail()).into(courseThumbnail);
-                    courseTitle.setText(course.getTitle());
-                    courseDescription.setText(course.getDescription());
-                    coursePrice.setText("$" + course.getPrice());
-                    courseDuration.setText(course.getDuration() + " hrs");
+                    if (course != null) {
+                        // Populate UI with course data
+                        Glide.with(CourseDetailActivity.this).load(course.getThumbnail()).into(courseThumbnail);
+                        courseTitle.setText(course.getTitle());
+                        courseDescription.setText(course.getDescription());
+                        coursePrice.setText("$" + course.getPrice());
+                        courseDuration.setText(course.getDuration() + " hrs");
 
-                    // Set Toolbar title to course title
-                    if (getSupportActionBar() != null) {
-                        getSupportActionBar().setTitle(course.getTitle());
+                        // Set Toolbar title to course title
+                        if (getSupportActionBar() != null) {
+                            getSupportActionBar().setTitle(course.getTitle());
+                        }
                     }
                 } else {
                     Toast.makeText(CourseDetailActivity.this, "Course not found", Toast.LENGTH_SHORT).show();
@@ -98,5 +111,34 @@ public class CourseDetailActivity extends AppCompatActivity {
                 Toast.makeText(CourseDetailActivity.this, "Error loading course: " + error.getMessage(), Toast.LENGTH_SHORT).show();
             }
         });
+    }
+
+    // Handle result from Edit Course page
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == EDIT_COURSE_REQUEST_CODE && resultCode == RESULT_OK && data != null) {
+            // Update the UI with the new values
+            courseTitle.setText(data.getStringExtra("title"));
+            courseDescription.setText(data.getStringExtra("description"));
+            coursePrice.setText("$" + data.getLongExtra("price", 0));
+            courseDuration.setText(data.getStringExtra("duration") + " hrs");
+
+            // Optionally update the toolbar title
+            if (getSupportActionBar() != null) {
+                getSupportActionBar().setTitle(data.getStringExtra("title"));
+            }
+        }
+    }
+
+    // Handle the Back button click
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if (item.getItemId() == android.R.id.home) {
+            onBackPressed();  // Navigate to the previous page
+            return true;
+        }
+        return super.onOptionsItemSelected(item);
     }
 }
