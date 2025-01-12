@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".EnrolledMembersActivity">
+    tools:context=".EnrolledMembers">
 
     <!-- Toolbar -->
     <androidx.appcompat.widget.Toolbar
@@ -14,7 +14,8 @@
         android:background="?attr/colorPrimary"
         android:title="Enrolled Members"
         android:titleTextColor="@android:color/white"
-        app:popupTheme="@style/ThemeOverlay.AppCompat.Light" />
+        app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        tools:ignore="MissingConstraints" />
 
     <!-- TextView to show if no enrolled members found -->
     <TextView

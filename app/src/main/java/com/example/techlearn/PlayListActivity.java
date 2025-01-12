@@ -553,6 +553,7 @@
 package com.example.techlearn;
 
 import android.app.Dialog;
+import android.content.Intent;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
@@ -639,6 +640,39 @@ public class PlayListActivity extends AppCompatActivity {
         // Load video
         loadVideo(introUrl);
 
+        binding.txtDescription.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                binding.rvPlayList.setVisibility(View.GONE);
+                binding.description.setVisibility(View.VISIBLE);
+
+                // Change colors
+                binding.txtDescription.setBackgroundColor(getResources().getColor(R.color.background)); // Primary color
+                binding.txtDescription.setTextColor(getResources().getColor(android.R.color.black));
+
+                binding.btnPlayList.setBackgroundColor(getResources().getColor(android.R.color.white)); // White color
+                binding.btnPlayList.setTextColor(getResources().getColor(android.R.color.black));
+
+            }
+        });
+
+        binding.btnPlayList.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+
+                binding.rvPlayList.setVisibility(View.VISIBLE);
+                binding.description.setVisibility(View.GONE);
+                binding.btnPlayList.setBackgroundColor(getResources().getColor(R.color.background)); // Primary color
+                binding.btnPlayList.setTextColor(getResources().getColor(android.R.color.black));
+
+                binding.txtDescription.setBackgroundColor(getResources().getColor(android.R.color.white)); // White color
+                binding.txtDescription.setTextColor(getResources().getColor(android.R.color.black));
+
+
+            }
+        });
+
         // Setup RecyclerView
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         binding.rvPlayList.setLayoutManager(layoutManager);
@@ -650,6 +684,13 @@ public class PlayListActivity extends AppCompatActivity {
         // Initialize Stripe Payment
         PaymentConfiguration.init(this, "pk_test_51QLXl2L0kLdfcs5yhjcDuc0WAnDoZgIu1Ts88JhU7ZpGDDmkZ8X6mkhAnRuFuhYQLePpmWrcKXJby0qtvMiw6FVc00DTOLaHK5");
         paymentSheet = new PaymentSheet(this, this::onPaymentResult);
+
+        binding.btnViewComments.setOnClickListener(view -> {
+            Intent intent = new Intent(PlayListActivity.this, DisplayCommentsActivity.class);
+            intent.putExtra("postId", postId);
+            startActivity(intent);
+        });
+
 
         checkEnrollmentStatus();
 
@@ -852,6 +893,12 @@ public class PlayListActivity extends AppCompatActivity {
                             binding.btnEnroll.setText("Enrolled");
                             binding.btnEnroll.setEnabled(false);
                             binding.rvPlayList.setVisibility(View.VISIBLE);  // Show the playlist
+                            binding.btnRateAndComment.setVisibility(View.VISIBLE);
+                            binding.btnRateAndComment.setOnClickListener(view -> {
+                                Intent intent = new Intent(PlayListActivity.this, RateAndCommentActivity.class);
+                                intent.putExtra("postId", postId);
+                                startActivity(intent);
+                            });
                         } else {
                             // User is not enrolled
                             binding.btnEnroll.setVisibility(View.VISIBLE);
