@@ -59,52 +59,59 @@ public class EnrolledMembers extends AppCompatActivity {
     }
 
     private void loadEnrolledMembers() {
-        FirebaseDatabase.getInstance().getReference("enrollments").addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                enrolledMembersList.clear();
-                boolean hasMembers = false;
-                for (DataSnapshot userSnapshot : snapshot.getChildren()) {
-                    String userId = userSnapshot.getKey();
-                    if (userSnapshot.hasChild(postId)) {
-                        loadUserDetails(userId);
-                        hasMembers = true;
-                    }
-                }
-                if (!hasMembers) {
-                    noEnrolledMembersTextView.setVisibility(View.VISIBLE);
-                    enrolledMembersRecyclerView.setVisibility(View.GONE);
-                }
-            }
+        FirebaseDatabase.getInstance().getReference("enrollments")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        enrolledMembersList.clear();
+                        boolean hasMembers = false;
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(EnrolledMembers.this, "Error loading enrolled members: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                        for (DataSnapshot userSnapshot : snapshot.getChildren()) {
+                            String userId = userSnapshot.getKey();
+                            if (userSnapshot.hasChild(postId)) {
+                                loadUserDetails(userId);
+                                hasMembers = true;
+                            }
+                        }
+
+                        if (!hasMembers) {
+                            noEnrolledMembersTextView.setVisibility(View.VISIBLE);
+                            enrolledMembersRecyclerView.setVisibility(View.GONE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(EnrolledMembers.this, "Error loading enrolled members: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
 
     private void loadUserDetails(String userId) {
-        FirebaseDatabase.getInstance().getReference("users").child(userId).addListenerForSingleValueEvent(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
-                UserModel user = snapshot.getValue(UserModel.class);
-                if (user != null) {
-                    enrolledMembersList.add(user);
-                    adapter.notifyDataSetChanged();
-                }
-                if (!enrolledMembersList.isEmpty()) {
-                    noEnrolledMembersTextView.setVisibility(View.GONE);
-                    enrolledMembersRecyclerView.setVisibility(View.VISIBLE);
-                }
-            }
+        FirebaseDatabase.getInstance().getReference("user_details").child(userId)
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        UserModel user = snapshot.getValue(UserModel.class);
+                        if (user != null) {
+                            enrolledMembersList.add(user);
+                            adapter.notifyDataSetChanged();
+                        }
 
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-                Toast.makeText(EnrolledMembers.this, "Error loading user details: " + error.getMessage(), Toast.LENGTH_SHORT).show();
-            }
-        });
+                        if (!enrolledMembersList.isEmpty()) {
+                            noEnrolledMembersTextView.setVisibility(View.GONE);
+                            enrolledMembersRecyclerView.setVisibility(View.VISIBLE);
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(EnrolledMembers.this, "Error loading user details: " + error.getMessage(), Toast.LENGTH_SHORT).show();
+                    }
+                });
     }
+
 
     // Handle Back button click
     @Override
