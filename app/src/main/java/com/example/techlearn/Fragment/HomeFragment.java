@@ -143,10 +143,10 @@ import android.view.ViewGroup;
 import android.widget.Toast;
 
 import com.example.techlearn.Adapter.CourseAdapter;
+import com.example.techlearn.EnrollCourseActivity;
 import com.example.techlearn.Model.CourseModel;
 import com.example.techlearn.R;
 import com.example.techlearn.UploadCourseActivity;
-import com.example.techlearn.UserHomeActivity;
 import com.example.techlearn.databinding.FragmentHomeBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -193,16 +193,13 @@ public class HomeFragment extends Fragment {
 
         // Load courses from Firebase
         loadCourses();
-
-        // Set up SearchView to filter courses by name
-        setupSearchView();
-
         binding.enrollCourseButton.setOnClickListener(view -> {
-            Intent intent = new Intent(getContext(), UserHomeActivity.class);
+            Intent intent = new Intent(getContext(), EnrollCourseActivity.class);
             startActivity(intent);
         });
 
-
+        // Set up SearchView to filter courses by name
+        setupSearchView();
 
         // Set up Upload Course button
         binding.uploadCourse.setOnClickListener(view -> {

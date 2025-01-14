@@ -742,7 +742,7 @@ public class PlayListActivity extends AppCompatActivity {
         // Create a JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                "https://2efa-70-26-192-21.ngrok-free.app/create-payment-intent",
+                "https://b724-70-26-192-21.ngrok-free.app/create-payment-intent",
                 requestBody,
                 response -> {
                     try {

@@ -124,7 +124,7 @@ public class UploadPlayListActivity extends AppCompatActivity {
         adapter = new PlayListAdapter( UploadPlayListActivity.this, list);
         binding.rvPlayList.setAdapter(adapter);
 
-        database.getReference().child("course").child(postId).child("playlist")
+        database.getReference().child("playlist").child(postId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
@@ -177,8 +177,6 @@ public class UploadPlayListActivity extends AppCompatActivity {
                         model.setTitle(title);
                         model.setVideoUrl(uri.toString());
                         model.setEnabled("false");
-
-
 
                         database.getReference().child("playlist").child(postId)
                                 .push()

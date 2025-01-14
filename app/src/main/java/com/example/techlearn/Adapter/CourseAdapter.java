@@ -36,8 +36,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
     public CourseAdapter(Context context, ArrayList<CourseModel> list) {
         this.context = context;
         this.list = list;
-
-        Log.d("CourseUserAdapter", "Adapter initialized with list size: " + list.size());
     }
 
     @NonNull
@@ -52,9 +50,6 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
 
         CourseModel model = list.get(position);
-
-        Log.d("CourseUserAdapter", "Binding Course: " + model.getTitle());
-
 
         holder.binding.courseTitle.setText(model.getTitle());
         holder.binding.coursePrice.setText("$ " + model.getPrice());
