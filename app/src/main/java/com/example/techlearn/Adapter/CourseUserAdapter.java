@@ -182,7 +182,7 @@ public class CourseUserAdapter extends RecyclerView.Adapter<CourseUserAdapter.vi
 
         // Load postedBy details
         if (model.getPostedBy() != null) {
-            database.getReference().child("admin_details").child(model.getPostedBy())
+            database.getReference().child("user_details").child(model.getPostedBy())
                     .addListenerForSingleValueEvent(new ValueEventListener() {
                         @Override
                         public void onDataChange(@NonNull DataSnapshot snapshot) {
