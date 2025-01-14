@@ -102,6 +102,7 @@ public class UserHomeFragment extends Fragment {
      * Loads courses from Firebase Realtime Database.
      */
     private void loadCoursesFromFirebase() {
+        String currentUserId = auth.getUid();
         database.getReference().child("course")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
@@ -111,7 +112,9 @@ public class UserHomeFragment extends Fragment {
                             CourseModel model = dataSnapshot.getValue(CourseModel.class);
                             if (model != null) {
                                 model.setPostId(dataSnapshot.getKey());
-                                courseList.add(model);
+                                if(!model.getPostedBy().equals(currentUserId)){
+                                    courseList.add(model);
+                                }
                             }
                         }
                         adapter.notifyDataSetChanged();

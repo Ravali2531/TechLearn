@@ -36,8 +36,8 @@ public class EnrollCourseAdapter extends RecyclerView.Adapter<EnrollCourseAdapte
     public EnrollCourseAdapter(Context context, ArrayList<CourseModel> list) {
         this.context = context;
         this.originalList = list;
-//        this.filteredList = new ArrayList<>();
-        this.filteredList = list;
+        this.filteredList = new ArrayList<>();
+//        this.filteredList = list;
     }
 
 
