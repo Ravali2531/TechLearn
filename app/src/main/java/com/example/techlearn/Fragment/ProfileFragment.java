@@ -1,5 +1,7 @@
 package com.example.techlearn.Fragment;
 
+import static android.app.Activity.RESULT_OK;
+
 import android.app.Dialog;
 import android.content.Intent;
 import android.graphics.Color;
@@ -14,12 +16,16 @@ import androidx.fragment.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.EditText;
 import android.widget.Toast;
 
 import com.example.techlearn.EditProfile;
 import com.example.techlearn.Login.SignInActivity;
 import com.example.techlearn.Model.UserModel;
 import com.example.techlearn.R;
+import com.example.techlearn.ShareActivity;
+import com.example.techlearn.TermsActivity;
 import com.example.techlearn.databinding.FragmentProfileBinding;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -99,6 +105,16 @@ public class ProfileFragment extends Fragment {
             startActivityForResult(intent, 1);
         });
 
+        binding.cardTerms.setOnClickListener(view -> {
+            Intent intent = new Intent(getContext(), TermsActivity.class);
+            startActivity(intent);
+        });
+
+        binding.cardShare.setOnClickListener(view -> {
+            Intent intent = new Intent(getContext(), ShareActivity.class);
+            startActivityForResult(intent, 100);
+        });
+
         return binding.getRoot();
     }
 
@@ -139,6 +155,10 @@ public class ProfileFragment extends Fragment {
         if (requestCode == 1 && data != null) {
             updateProfile(data.getData());
         }
+        if (requestCode == 100 && resultCode == RESULT_OK) {
+            Toast.makeText(getContext(), "Email sent successfully!", Toast.LENGTH_SHORT).show();
+        }
+
     }
 
     private void updateProfile(Uri uri) {
