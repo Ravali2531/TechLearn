@@ -180,7 +180,7 @@ public class UploadPlayListActivity extends AppCompatActivity {
 
 
 
-                        database.getReference().child("course").child(postId).child("playlist")
+                        database.getReference().child("playlist").child(postId)
                                 .push()
                                 .setValue(model).addOnSuccessListener(new OnSuccessListener<Void>() {
                                     @Override

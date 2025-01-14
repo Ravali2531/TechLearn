@@ -41,6 +41,7 @@ public class UserHomeActivity extends AppCompatActivity {
         binding = ActivityUserHomeBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+
         // Initialize Firebase and Dialog
         auth = FirebaseAuth.getInstance();
         database = FirebaseDatabase.getInstance();
@@ -75,28 +76,35 @@ public class UserHomeActivity extends AppCompatActivity {
         binding.rvCourse.setLayoutManager(layoutManager);
         adapter = new CourseUserAdapter(this, courseList);
         binding.rvCourse.setAdapter(adapter);
+
+        Log.d("UserHomeActivity", "RecyclerView initialized with adapter");
     }
 
     private void loadCoursesFromFirebase() {
-        String currentUserId = auth.getUid();
-
-        // Get the user's role from the database
-        database.getReference("user_details").child(currentUserId)
+        loadingDialog.show();
+        database.getReference("course")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
-                        if (snapshot.exists()) {
-                            String role = snapshot.child("role").getValue(String.class);
+                        courseList.clear();
+                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+                            CourseModel model = dataSnapshot.getValue(CourseModel.class);
 
-                            // If the user is an Admin, exclude their own courses
-                            if ("Admin".equalsIgnoreCase(role)) {
-                                loadCoursesForAdmin(currentUserId);
-                            } else {
-                                loadCoursesForUser();
+                            if (model != null) {
+                                Log.d("UserHomeActivity", "Course Title: " + model.getTitle());
+                                courseList.add(model);
                             }
-                        } else {
-                            loadingDialog.dismiss();
-                            Toast.makeText(UserHomeActivity.this, "User details not found", Toast.LENGTH_SHORT).show();
+                        }
+
+                        Log.d("UserHomeActivity", "Total Courses Loaded: " + courseList.size());
+
+                        // ✅ Log before calling notifyDataSetChanged()
+                        Log.d("UserHomeActivity", "Calling notifyDataSetChanged()");
+                        adapter.notifyDataSetChanged();
+                        loadingDialog.dismiss();
+
+                        if (courseList.isEmpty()) {
+                            Toast.makeText(UserHomeActivity.this, "No courses available", Toast.LENGTH_SHORT).show();
                         }
                     }
 
@@ -107,6 +115,10 @@ public class UserHomeActivity extends AppCompatActivity {
                     }
                 });
     }
+
+
+
+
     private void loadCoursesForAdmin(String currentUserId) {
         database.getReference("course")
                 .addListenerForSingleValueEvent(new ValueEventListener() {
@@ -121,9 +133,9 @@ public class UserHomeActivity extends AppCompatActivity {
                                         ", Posted by: " + model.getPostedBy());
 
                                 // Exclude courses posted by the Admin
-                                if (!model.getPostedBy().equals(currentUserId)) {
+//                                if (!model.getPostedBy().equals(currentUserId)) {
                                     courseList.add(model);
-                                }
+//                                }
                             } else {
                                 Log.d("UserHomeActivity", "Null model or missing postedBy field.");
                             }
@@ -241,6 +253,7 @@ public class UserHomeActivity extends AppCompatActivity {
 
     private void updateUI() {
         adapter.notifyDataSetChanged();
+        loadingDialog.dismiss();
         if (courseList.isEmpty()) {
             Toast.makeText(UserHomeActivity.this, "No courses available", Toast.LENGTH_SHORT).show();
         }

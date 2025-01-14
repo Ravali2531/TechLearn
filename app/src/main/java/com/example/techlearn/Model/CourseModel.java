@@ -1,11 +1,14 @@
 package com.example.techlearn.Model;
 
+import java.util.Map;
+
 public class CourseModel {
 
     private String title, duration,  rating, description;
     private long price;
 
     private String thumbnail, introVideo,postId, postedBy, enable;
+
 
     public CourseModel() {
     }
@@ -110,4 +113,5 @@ public class CourseModel {
     public void setEnable(String enable) {
         this.enable = enable;
     }
+
 }

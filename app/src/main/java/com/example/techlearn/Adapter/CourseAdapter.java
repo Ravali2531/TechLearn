@@ -2,6 +2,7 @@ package com.example.techlearn.Adapter;
 
 import android.content.Context;
 import android.content.Intent;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -35,6 +36,8 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
     public CourseAdapter(Context context, ArrayList<CourseModel> list) {
         this.context = context;
         this.list = list;
+
+        Log.d("CourseUserAdapter", "Adapter initialized with list size: " + list.size());
     }
 
     @NonNull
@@ -50,12 +53,16 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
 
         CourseModel model = list.get(position);
 
+        Log.d("CourseUserAdapter", "Binding Course: " + model.getTitle());
+
+
+        holder.binding.courseTitle.setText(model.getTitle());
+        holder.binding.coursePrice.setText("$ " + model.getPrice());
+
         Picasso.get().load(model.getThumbnail())
                 .placeholder(R.drawable.placeholder)
                 .into(holder.binding.courseImage);
 
-        holder.binding.courseTitle.setText(model.getTitle());
-        holder.binding.coursePrice.setText("$ " + model.getPrice());
 //        holder.binding.name.setText(model.getPostedBy());
 
         database.getReference().child("user_details").child(auth.getUid()).addValueEventListener(new ValueEventListener() {

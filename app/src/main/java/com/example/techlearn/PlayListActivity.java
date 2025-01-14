@@ -742,7 +742,7 @@ public class PlayListActivity extends AppCompatActivity {
         // Create a JsonObjectRequest
         JsonObjectRequest request = new JsonObjectRequest(
                 Request.Method.POST,
-                "https://caef-70-26-192-21.ngrok-free.app/create-payment-intent",
+                "https://2efa-70-26-192-21.ngrok-free.app/create-payment-intent",
                 requestBody,
                 response -> {
                     try {
@@ -811,7 +811,7 @@ public class PlayListActivity extends AppCompatActivity {
     }
 
     private void loadPlayList() {
-        FirebaseDatabase.getInstance().getReference("course").child(postId).child("playlist")
+        FirebaseDatabase.getInstance().getReference("playlist").child(postId)
                 .addValueEventListener(new ValueEventListener() {
                     @Override
                     public void onDataChange(@NonNull DataSnapshot snapshot) {

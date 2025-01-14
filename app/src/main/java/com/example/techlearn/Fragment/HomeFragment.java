@@ -240,6 +240,7 @@ public class HomeFragment extends Fragment {
                             }
                         } else {
                             binding.nodataUploadCourse.setVisibility(View.VISIBLE);
+                            binding.searchView.setVisibility(View.GONE);
                         }
                         adapter.notifyDataSetChanged();
                         loadingDialog.dismiss();
