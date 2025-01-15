@@ -806,6 +806,8 @@ public class PlayListActivity extends AppCompatActivity {
                     Toast.makeText(this, "Enrolled Successfully!", Toast.LENGTH_SHORT).show();
                     binding.btnEnroll.setEnabled(false);
                     binding.btnEnroll.setText("Enrolled");
+                    binding.btnRateAndComment.setVisibility(View.VISIBLE);
+                    binding.btnViewComments.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Enrollment Failed", Toast.LENGTH_SHORT).show());
     }
