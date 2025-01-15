@@ -220,6 +220,37 @@ public class HomeFragment extends Fragment {
         loadingDialog.show();
     }
 
+//    private void loadCourses() {
+//        database.getReference().child("course").orderByChild("postedBy").equalTo(auth.getUid())
+//                .addValueEventListener(new ValueEventListener() {
+//                    @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        list.clear();
+//                        if (snapshot.exists()) {
+//                            binding.nodataUploadCourse.setVisibility(View.GONE);
+//                            for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                                CourseModel model = dataSnapshot.getValue(CourseModel.class);
+//                                if (model != null) {
+//                                    model.setPostId(dataSnapshot.getKey());
+//                                    list.add(model);
+//                                }
+//                            }
+//                        } else {
+//                            binding.nodataUploadCourse.setVisibility(View.VISIBLE);
+//                            binding.searchView.setVisibility(View.GONE);
+//                        }
+//                        adapter.notifyDataSetChanged();
+//                        loadingDialog.dismiss();
+//                    }
+//
+//                    @Override
+//                    public void onCancelled(@NonNull DatabaseError error) {
+//                        Toast.makeText(getContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+//                        loadingDialog.dismiss();
+//                    }
+//                });
+//    }
+
     private void loadCourses() {
         database.getReference().child("course").orderByChild("postedBy").equalTo(auth.getUid())
                 .addValueEventListener(new ValueEventListener() {
@@ -229,11 +260,25 @@ public class HomeFragment extends Fragment {
                         if (snapshot.exists()) {
                             binding.nodataUploadCourse.setVisibility(View.GONE);
                             for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                                CourseModel model = dataSnapshot.getValue(CourseModel.class);
-                                if (model != null) {
-                                    model.setPostId(dataSnapshot.getKey());
-                                    list.add(model);
+                                CourseModel model = new CourseModel();
+                                model.setPostId(dataSnapshot.getKey());
+
+                                // Handle rating field type dynamically
+                                Object ratingValue = dataSnapshot.child("rating").getValue();
+                                if (ratingValue instanceof String) {
+                                    model.setRating((String) ratingValue);
+                                } else if (ratingValue instanceof Double) {
+                                    model.setRating((Double) ratingValue);
                                 }
+
+                                // Set other fields
+                                model.setTitle(dataSnapshot.child("title").getValue(String.class));
+                                model.setDescription(dataSnapshot.child("description").getValue(String.class));
+                                model.setPrice(dataSnapshot.child("price").getValue(Long.class));
+                                model.setThumbnail(dataSnapshot.child("thumbnail").getValue(String.class));
+                                model.setPostedBy(dataSnapshot.child("postedBy").getValue(String.class));
+
+                                list.add(model);
                             }
                         } else {
                             binding.nodataUploadCourse.setVisibility(View.VISIBLE);
@@ -250,6 +295,7 @@ public class HomeFragment extends Fragment {
                     }
                 });
     }
+
 
     private void setupSearchView() {
         binding.searchView.setOnQueryTextListener(new androidx.appcompat.widget.SearchView.OnQueryTextListener() {

@@ -4,7 +4,8 @@ import java.util.Map;
 
 public class CourseModel {
 
-    private String title, duration,  rating, description;
+    private String title, duration,  description;
+    private double rating;
     private long price;
 
     private String thumbnail, introVideo,postId, postedBy, enable;
@@ -13,7 +14,7 @@ public class CourseModel {
     public CourseModel() {
     }
 
-    public CourseModel(String title, String duration, String rating, String description, long price, String thumbnail, String introVideo, String postedBy, String enable) {
+    public CourseModel(String title, String duration, double rating, String description, long price, String thumbnail, String introVideo, String postedBy, String enable) {
         this.title = title;
         this.duration = duration;
         this.rating = rating;
@@ -50,12 +51,35 @@ public class CourseModel {
         this.duration = duration;
     }
 
-    public String getRating() {
+    public double getRating() {
         return rating;
     }
 
-    public void setRating(String rating) {
-        this.rating = rating;
+//    public void setRating(double rating) {
+//        this.rating = rating;
+//    }
+//
+//    public void setRating(String rating) {
+//        try {
+//            this.rating = Double.parseDouble(rating);
+//        } catch (NumberFormatException e) {
+//            this.rating = 0.0;
+//        }
+//    }
+
+    public void setRating(Object rating) {
+        // Safely handle both String and Double values
+        if (rating instanceof String) {
+            try {
+                this.rating = Double.parseDouble((String) rating);
+            } catch (NumberFormatException e) {
+                this.rating = 0.0;
+            }
+        } else if (rating instanceof Double) {
+            this.rating = (Double) rating;
+        } else {
+            this.rating = 0.0;
+        }
     }
 
     public String getDescription() {

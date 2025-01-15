@@ -36,10 +36,8 @@ public class EnrollCourseAdapter extends RecyclerView.Adapter<EnrollCourseAdapte
     public EnrollCourseAdapter(Context context, ArrayList<CourseModel> list) {
         this.context = context;
         this.originalList = list;
-        this.filteredList = new ArrayList<>();
-//        this.filteredList = list;
+        this.filteredList = new ArrayList<>(list);
     }
-
 
     @NonNull
     @Override
@@ -51,10 +49,13 @@ public class EnrollCourseAdapter extends RecyclerView.Adapter<EnrollCourseAdapte
     @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
         CourseModel model = filteredList.get(position);
-        Log.d("CourseUserAdapter", "Binding course: " + model.getTitle());
-        Log.d("CourseUserAdapter", "Post ID: " + model.getPostId());
 
-        // Load course thumbnail if available
+        holder.binding.courseTitle.setText(model.getTitle());
+        holder.binding.coursePrice.setText("$ " + model.getPrice());
+
+        // Display course rating safely
+//        holder.binding.courseRating.setText(String.format("%.1f", model.getRating()));
+
         if (model.getThumbnail() != null && !model.getThumbnail().isEmpty()) {
             Picasso.get().load(model.getThumbnail())
                     .placeholder(R.drawable.placeholder)
@@ -63,8 +64,6 @@ public class EnrollCourseAdapter extends RecyclerView.Adapter<EnrollCourseAdapte
             holder.binding.courseImage.setImageResource(R.drawable.placeholder);
         }
 
-        holder.binding.courseTitle.setText(model.getTitle());
-        holder.binding.coursePrice.setText(String.valueOf(model.getPrice()));
 
         // Load postedBy details
         if (model.getPostedBy() != null) {
@@ -105,7 +104,7 @@ public class EnrollCourseAdapter extends RecyclerView.Adapter<EnrollCourseAdapte
                 intent.putExtra("introUrl", model.getIntroVideo());
                 intent.putExtra("title", model.getTitle());
                 intent.putExtra("price", model.getPrice());
-                intent.putExtra("rate", model.getRating());
+                intent.putExtra("rate", String.valueOf(model.getRating()) != null ? String.valueOf(model.getRating()): "0");
                 intent.putExtra("duration", model.getDuration());
                 intent.putExtra("description", model.getDescription());
 
@@ -117,31 +116,13 @@ public class EnrollCourseAdapter extends RecyclerView.Adapter<EnrollCourseAdapte
             }
         });
 
-
     }
+
 
     @Override
     public int getItemCount() {
         return filteredList.size();
     }
-
-    // Method to filter courses based on search query
-//    public void filter(String query) {
-//        if (query.isEmpty()) {
-//            filteredList.clear();
-//            filteredList.addAll(originalList);
-//        } else {
-//            List<CourseModel> filtered = new ArrayList<>();
-//            for (CourseModel model : originalList) {
-//                if (model.getTitle().toLowerCase().contains(query.toLowerCase())) {
-//                    filtered.add(model);
-//                }
-//            }
-//            filteredList.clear();
-//            filteredList.addAll(filtered);
-//        }
-//        notifyDataSetChanged();
-//    }
 
     public void filter(String query) {
         filteredList.clear();
@@ -157,8 +138,6 @@ public class EnrollCourseAdapter extends RecyclerView.Adapter<EnrollCourseAdapte
         notifyDataSetChanged();
     }
 
-
-    // Method to filter courses by enrollment status
     public void filterByEnrollmentStatus(boolean enrolled, List<String> enrolledCourseIds) {
         filteredList.clear();
 
