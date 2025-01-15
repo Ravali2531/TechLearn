@@ -156,7 +156,6 @@ public class CourseUserAdapter extends RecyclerView.Adapter<CourseUserAdapter.vi
         this.context = context;
         this.originalList = list;
         this.filteredList = new ArrayList<>();
-//        this.filteredList.addAll(list);  // Copy all items from the original list
     }
 
 
@@ -168,66 +167,137 @@ public class CourseUserAdapter extends RecyclerView.Adapter<CourseUserAdapter.vi
     }
 
     @Override
+//    public void onBindViewHolder(@NonNull viewHolder holder, int position) {
+//        CourseModel model = filteredList.get(position);
+//        Log.d("CourseUserAdapter", "Binding course: " + model.getTitle());
+//        Log.d("CourseUserAdapter", "Post ID: " + model.getPostId());
+//
+//
+//        // Load course thumbnail if available
+//        if (model.getThumbnail() != null && !model.getThumbnail().isEmpty()) {
+//            Picasso.get().load(model.getThumbnail())
+//                    .placeholder(R.drawable.placeholder)
+//                    .into(holder.binding.courseImage);
+//        } else {
+//            holder.binding.courseImage.setImageResource(R.drawable.placeholder);
+//        }
+//
+//        holder.binding.courseTitle.setText(model.getTitle());
+//        holder.binding.coursePrice.setText(String.valueOf(model.getPrice()));
+//
+//        // Load postedBy details
+//        if (model.getPostedBy() != null) {
+//            database.getReference().child("user_details").child(model.getPostedBy())
+//                    .addListenerForSingleValueEvent(new ValueEventListener() {
+//                        @Override
+//                        public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                            if (snapshot.exists()) {
+//                                UserModel userModel = snapshot.getValue(UserModel.class);
+//                                if (userModel != null) {
+//                                    postedByName = userModel.getName();
+//                                    holder.binding.name.setText(postedByName);
+//                                    if (userModel.getProfile() != null && !userModel.getProfile().isEmpty()) {
+//                                        Picasso.get().load(userModel.getProfile())
+//                                                .placeholder(R.drawable.placeholder)
+//                                                .into(holder.binding.postedByProfile);
+//                                    } else {
+//                                        holder.binding.postedByProfile.setImageResource(R.drawable.placeholder);
+//                                    }
+//                                }
+//                            }
+//                        }
+//
+//                        @Override
+//                        public void onCancelled(@NonNull DatabaseError error) {
+//                            Toast.makeText(context, "Error loading user details", Toast.LENGTH_SHORT).show();
+//                        }
+//                    });
+//        }
+//
+//        holder.itemView.setOnClickListener(view -> {
+//            Intent intent = new Intent(context, PlayListActivity.class);
+//            intent.putExtra("postId", model.getPostId());
+//            intent.putExtra("name", postedByName);
+//            intent.putExtra("introUrl", model.getIntroVideo());
+//            intent.putExtra("title", model.getTitle());
+//            intent.putExtra("price", model.getPrice());
+//            intent.putExtra("rate", model.getRating());
+//            intent.putExtra("duration", model.getDuration());
+//            intent.putExtra("description", model.getDescription());
+//            context.startActivity(intent);
+//        });
+//    }
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
-        CourseModel model = filteredList.get(position);
-        Log.d("CourseUserAdapter", "Binding course: " + model.getTitle());
-        Log.d("CourseUserAdapter", "Post ID: " + model.getPostId());
+        try {
+            CourseModel model = filteredList.get(position);
 
+            // Log the course title and postId for debugging
+            Log.d("CourseUserAdapter", "Binding course: " + (model.getTitle() != null ? model.getTitle() : "N/A"));
+            Log.d("CourseUserAdapter", "Post ID: " + (model.getPostId() != null ? model.getPostId() : "N/A"));
 
-        // Load course thumbnail if available
-        if (model.getThumbnail() != null && !model.getThumbnail().isEmpty()) {
-            Picasso.get().load(model.getThumbnail())
-                    .placeholder(R.drawable.placeholder)
-                    .into(holder.binding.courseImage);
-        } else {
-            holder.binding.courseImage.setImageResource(R.drawable.placeholder);
-        }
+            // Load course thumbnail if available
+            if (model.getThumbnail() != null && !model.getThumbnail().isEmpty()) {
+                Picasso.get().load(model.getThumbnail())
+                        .placeholder(R.drawable.placeholder)
+                        .into(holder.binding.courseImage);
+            } else {
+                holder.binding.courseImage.setImageResource(R.drawable.placeholder);
+            }
 
-        holder.binding.courseTitle.setText(model.getTitle());
-        holder.binding.coursePrice.setText(String.valueOf(model.getPrice()));
+            holder.binding.courseTitle.setText(model.getTitle() != null ? model.getTitle() : "N/A");
+            holder.binding.coursePrice.setText(String.valueOf(model.getPrice() != 0 ? model.getPrice() : "Free"));
 
-        // Load postedBy details
-        if (model.getPostedBy() != null) {
-            database.getReference().child("user_details").child(model.getPostedBy())
-                    .addListenerForSingleValueEvent(new ValueEventListener() {
-                        @Override
-                        public void onDataChange(@NonNull DataSnapshot snapshot) {
-                            if (snapshot.exists()) {
-                                UserModel userModel = snapshot.getValue(UserModel.class);
-                                if (userModel != null) {
-                                    postedByName = userModel.getName();
-                                    holder.binding.name.setText(postedByName);
-                                    if (userModel.getProfile() != null && !userModel.getProfile().isEmpty()) {
-                                        Picasso.get().load(userModel.getProfile())
-                                                .placeholder(R.drawable.placeholder)
-                                                .into(holder.binding.postedByProfile);
-                                    } else {
-                                        holder.binding.postedByProfile.setImageResource(R.drawable.placeholder);
+            // Load postedBy details
+            if (model.getPostedBy() != null) {
+                database.getReference().child("user_details").child(model.getPostedBy())
+                        .addListenerForSingleValueEvent(new ValueEventListener() {
+                            @Override
+                            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                                if (snapshot.exists()) {
+                                    UserModel userModel = snapshot.getValue(UserModel.class);
+                                    if (userModel != null) {
+                                        postedByName = userModel.getName();
+                                        holder.binding.name.setText(postedByName);
+                                        if (userModel.getProfile() != null && !userModel.getProfile().isEmpty()) {
+                                            Picasso.get().load(userModel.getProfile())
+                                                    .placeholder(R.drawable.placeholder)
+                                                    .into(holder.binding.postedByProfile);
+                                        } else {
+                                            holder.binding.postedByProfile.setImageResource(R.drawable.placeholder);
+                                        }
                                     }
                                 }
                             }
-                        }
 
-                        @Override
-                        public void onCancelled(@NonNull DatabaseError error) {
-                            Toast.makeText(context, "Error loading user details", Toast.LENGTH_SHORT).show();
-                        }
-                    });
+                            @Override
+                            public void onCancelled(@NonNull DatabaseError error) {
+                                Toast.makeText(context, "Error loading user details", Toast.LENGTH_SHORT).show();
+                            }
+                        });
+            }
+
+            holder.itemView.setOnClickListener(view -> {
+                if (model.getPostId() != null) {
+                    Intent intent = new Intent(context, PlayListActivity.class);
+                    intent.putExtra("postId", model.getPostId());
+                    intent.putExtra("name", postedByName);
+                    intent.putExtra("introUrl", model.getIntroVideo() != null ? model.getIntroVideo() : "");
+                    intent.putExtra("title", model.getTitle() != null ? model.getTitle() : "N/A");
+                    intent.putExtra("price", model.getPrice());
+                    intent.putExtra("rate", String.valueOf(model.getRating()) != null ? String.valueOf(model.getRating()): "0");
+                    intent.putExtra("duration", model.getDuration() != null ? model.getDuration() : "N/A");
+                    intent.putExtra("description", model.getDescription() != null ? model.getDescription() : "N/A");
+                    context.startActivity(intent);
+                } else {
+                    Toast.makeText(context, "Invalid course ID", Toast.LENGTH_SHORT).show();
+                }
+            });
+        } catch (Exception e) {
+            Log.e("CourseUserAdapter", "Error in onBindViewHolder: " + e.getMessage());
         }
-
-        holder.itemView.setOnClickListener(view -> {
-            Intent intent = new Intent(context, PlayListActivity.class);
-            intent.putExtra("postId", model.getPostId());
-            intent.putExtra("name", postedByName);
-            intent.putExtra("introUrl", model.getIntroVideo());
-            intent.putExtra("title", model.getTitle());
-            intent.putExtra("price", model.getPrice());
-            intent.putExtra("rate", model.getRating());
-            intent.putExtra("duration", model.getDuration());
-            intent.putExtra("description", model.getDescription());
-            context.startActivity(intent);
-        });
     }
+
+
 
     @Override
     public int getItemCount() {

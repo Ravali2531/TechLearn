@@ -79,7 +79,7 @@
                     android:layout_height="15dp"
                     android:layout_gravity="center"
                     android:layout_marginLeft="10dp"
-                    app:srcCompat="@drawable/star" />
+                    app:srcCompat="@drawable/time" />
 
                 <TextView
                     android:id="@+id/duration"

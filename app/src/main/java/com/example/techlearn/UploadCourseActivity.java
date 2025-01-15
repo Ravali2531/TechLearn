@@ -420,7 +420,7 @@ public class UploadCourseActivity extends AppCompatActivity {
             model.setTitle(title);
             model.setPrice(Long.parseLong(price));
             model.setDuration(duration);
-            model.setRating(rating);
+            model.setRating(Double.parseDouble(rating));
             model.setDescription(description);
             model.setThumbnail(imageUri.toString());
             model.setIntroVideo(uri.toString());

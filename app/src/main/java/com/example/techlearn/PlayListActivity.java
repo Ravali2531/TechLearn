@@ -633,7 +633,13 @@ public class PlayListActivity extends AppCompatActivity {
 
         // Set data to UI
         binding.title.setText(title);
-        binding.rating.setText(rating);
+//        binding.rating.setText(rating);
+        // Handle rating display
+        if (rating != null && !rating.isEmpty()) {
+            binding.rating.setText(rating);
+        } else {
+            binding.rating.setText("N/A");
+        }
         binding.duration.setText(duration);
         binding.price.setText(price+"");
 
@@ -806,6 +812,8 @@ public class PlayListActivity extends AppCompatActivity {
                     Toast.makeText(this, "Enrolled Successfully!", Toast.LENGTH_SHORT).show();
                     binding.btnEnroll.setEnabled(false);
                     binding.btnEnroll.setText("Enrolled");
+                    binding.btnRateAndComment.setVisibility(View.VISIBLE);
+                    binding.btnViewComments.setVisibility(View.GONE);
                 })
                 .addOnFailureListener(e -> Toast.makeText(this, "Enrollment Failed", Toast.LENGTH_SHORT).show());
     }
@@ -922,4 +930,55 @@ public class PlayListActivity extends AppCompatActivity {
             simpleExoPlayer = null;
         }
     }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        fetchUpdatedRating();
+    }
+    private void fetchUpdatedRating() {
+        FirebaseDatabase.getInstance().getReference("course")
+                .child(postId)
+                .child("rating")
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            Object ratingValue = snapshot.getValue();
+
+                            double updatedRating = 0.0;
+
+                            if (ratingValue instanceof Double) {
+                                updatedRating = (Double) ratingValue;
+                            } else if (ratingValue instanceof Long) {
+                                updatedRating = ((Long) ratingValue).doubleValue();
+                            } else if (ratingValue instanceof String) {
+                                try {
+                                    updatedRating = Double.parseDouble((String) ratingValue);
+                                } catch (NumberFormatException e) {
+                                    updatedRating = 0.0;
+                                }
+                            }
+
+                            // Display the rating
+
+                            if (updatedRating > 0) {
+                                binding.rating.setText(String.format("%.1f", updatedRating));
+                            } else {
+                                binding.rating.setText("0.0");
+                            }
+                        } else {
+                            binding.rating.setText("0.0");
+                        }
+                    }
+
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                        Toast.makeText(PlayListActivity.this, "Failed to update rating", Toast.LENGTH_SHORT).show();
+                    }
+                });
+    }
+
+
+
 }

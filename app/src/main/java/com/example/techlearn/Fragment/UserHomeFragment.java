@@ -4,6 +4,7 @@ import android.app.Dialog;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -102,21 +103,55 @@ public class UserHomeFragment extends Fragment {
      * Loads courses from Firebase Realtime Database.
      */
     private void loadCoursesFromFirebase() {
+        String currentUserId = auth.getUid();
         database.getReference().child("course")
                 .addValueEventListener(new ValueEventListener() {
                     @Override
+//                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+//                        courseList.clear();
+//                        for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
+//                            CourseModel model = dataSnapshot.getValue(CourseModel.class);
+//                            if (model != null) {
+//                                model.setPostId(dataSnapshot.getKey());
+//                                if (model.getPostedBy() != null && !model.getPostedBy().equals(currentUserId)) {
+//                                    courseList.add(model);
+//                                }
+//                            }
+//
+//                        }
+//                        adapter.notifyDataSetChanged();
+//                        loadingDialog.dismiss();
+//                    }
                     public void onDataChange(@NonNull DataSnapshot snapshot) {
                         courseList.clear();
                         for (DataSnapshot dataSnapshot : snapshot.getChildren()) {
-                            CourseModel model = dataSnapshot.getValue(CourseModel.class);
-                            if (model != null) {
-                                model.setPostId(dataSnapshot.getKey());
-                                courseList.add(model);
+                            try {
+                                CourseModel model = dataSnapshot.getValue(CourseModel.class);
+
+                                if (model != null) {
+                                    model.setPostId(dataSnapshot.getKey());
+
+                                    // Handle rating conversion from String to double
+                                    Object ratingValue = dataSnapshot.child("rating").getValue();
+                                    if (ratingValue != null) {
+                                        if (ratingValue instanceof String) {
+                                            model.setRating(Double.parseDouble((String) ratingValue));
+                                        } else if (ratingValue instanceof Double) {
+                                            model.setRating((Double) ratingValue);
+                                        }
+                                    }
+                                    if (!model.getPostedBy().equals(currentUserId)) {
+                                        courseList.add(model);
+                                    }
+                                }
+                            } catch (Exception e) {
+                                Log.e("UserHomeFragment", "Error parsing course data: " + e.getMessage());
                             }
                         }
                         adapter.notifyDataSetChanged();
                         loadingDialog.dismiss();
                     }
+
 
                     @Override
                     public void onCancelled(@NonNull DatabaseError error) {

@@ -47,52 +47,97 @@ public class CourseAdapter extends RecyclerView.Adapter<CourseAdapter.viewHolder
     }
 
     @Override
+//    public void onBindViewHolder(@NonNull viewHolder holder, int position) {
+//
+//        CourseModel model = list.get(position);
+//
+//        holder.binding.courseTitle.setText(model.getTitle());
+//        holder.binding.coursePrice.setText("$ " + model.getPrice());
+//
+//        Picasso.get().load(model.getThumbnail())
+//                .placeholder(R.drawable.placeholder)
+//                .into(holder.binding.courseImage);
+//
+////        holder.binding.name.setText(model.getPostedBy());
+//
+//        database.getReference().child("user_details").child(auth.getUid()).addValueEventListener(new ValueEventListener() {
+//            @Override
+//            public void onDataChange(@NonNull DataSnapshot snapshot) {
+//
+//                if(snapshot.exists()){
+//
+//                    UserModel userModel = new UserModel();
+//
+//                    Picasso.get().load(model.getThumbnail())
+//                            .placeholder(R.drawable.placeholder)
+//                            .into(holder.binding.postedByProfile);
+//
+//                    holder.binding.name.setText(userModel.getName());
+//                }
+//
+//            }
+//
+//            @Override
+//            public void onCancelled(@NonNull DatabaseError error) {
+//
+//            }
+//        });
+//
+//        holder.itemView.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                Intent intent = new Intent(context, CourseDetailActivity.class);
+//                intent.putExtra("postId", model.getPostId());
+//                context.startActivity(intent);
+//            }
+//        });
+//
+//    }
+//    @Override
     public void onBindViewHolder(@NonNull viewHolder holder, int position) {
-
         CourseModel model = list.get(position);
 
         holder.binding.courseTitle.setText(model.getTitle());
         holder.binding.coursePrice.setText("$ " + model.getPrice());
 
-        Picasso.get().load(model.getThumbnail())
-                .placeholder(R.drawable.placeholder)
-                .into(holder.binding.courseImage);
+        if (model.getThumbnail() != null && !model.getThumbnail().isEmpty()) {
+            Picasso.get().load(model.getThumbnail())
+                    .placeholder(R.drawable.placeholder)
+                    .into(holder.binding.courseImage);
+        } else {
+            holder.binding.courseImage.setImageResource(R.drawable.placeholder);
+        }
 
-//        holder.binding.name.setText(model.getPostedBy());
+        // Load postedBy details
+        database.getReference().child("user_details").child(model.getPostedBy())
+                .addListenerForSingleValueEvent(new ValueEventListener() {
+                    @Override
+                    public void onDataChange(@NonNull DataSnapshot snapshot) {
+                        if (snapshot.exists()) {
+                            UserModel userModel = snapshot.getValue(UserModel.class);
+                            if (userModel != null) {
+                                holder.binding.name.setText(userModel.getName());
+                                if (userModel.getProfile() != null && !userModel.getProfile().isEmpty()) {
+                                    Picasso.get().load(userModel.getProfile())
+                                            .placeholder(R.drawable.placeholder)
+                                            .into(holder.binding.postedByProfile);
+                                }
+                            }
+                        }
+                    }
 
-        database.getReference().child("user_details").child(auth.getUid()).addValueEventListener(new ValueEventListener() {
-            @Override
-            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                    @Override
+                    public void onCancelled(@NonNull DatabaseError error) {
+                    }
+                });
 
-                if(snapshot.exists()){
-
-                    UserModel userModel = new UserModel();
-
-                    Picasso.get().load(model.getThumbnail())
-                            .placeholder(R.drawable.placeholder)
-                            .into(holder.binding.postedByProfile);
-
-                    holder.binding.name.setText(userModel.getName());
-                }
-
-            }
-
-            @Override
-            public void onCancelled(@NonNull DatabaseError error) {
-
-            }
+        holder.itemView.setOnClickListener(view -> {
+            Intent intent = new Intent(context, CourseDetailActivity.class);
+            intent.putExtra("postId", model.getPostId());
+            context.startActivity(intent);
         });
-
-        holder.itemView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                Intent intent = new Intent(context, CourseDetailActivity.class);
-                intent.putExtra("postId", model.getPostId());
-                context.startActivity(intent);
-            }
-        });
-
     }
+
 
     @Override
     public int getItemCount() {
