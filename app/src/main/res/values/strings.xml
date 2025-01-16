@@ -5,7 +5,6 @@
 
     <!-- Role options for the signup role selector -->
     <string-array name="role_array">
-        <item>Choose One:</item>
         <item>User</item>
         <item>Admin</item>
     </string-array>
